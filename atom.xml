@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>彭能的博客</title>
+  
+  <subtitle>欢迎来到我的猪场</subtitle>
+  <link href="https://guudman.github.io/atom.xml" rel="self"/>
+  
+  <link href="https://guudman.github.io/"/>
+  <updated>2023-09-09T07:56:26.859Z</updated>
+  <id>https://guudman.github.io/</id>
+  
+  <author>
+    <name>Neng Peng</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>关于我</title>
+    <link href="https://guudman.github.io/2023/09/09/%E5%85%B3%E4%BA%8E%E6%88%91/"/>
+    <id>https://guudman.github.io/2023/09/09/%E5%85%B3%E4%BA%8E%E6%88%91/</id>
+    <published>2023-09-09T07:55:49.000Z</published>
+    <updated>2023-09-09T07:56:26.859Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="自我介绍"><a href="#自我介绍" class="headerlink" title="自我介绍"></a>自我介绍</h2><p>无论你遇见谁，他&#x2F;她都是你生命中该出现的人，绝非偶然，他&#x2F;她一定会教会你一些什么。所以你要相信， 无论你走到哪里，那都是你该去的地方，经历一些你该经历的事，遇见一些你该遇见的人。</p><h2 id="后续计划"><a href="#后续计划" class="headerlink" title="后续计划"></a>后续计划</h2><p>* </p><p>* </p><h2 id="希望你的加入"><a href="#希望你的加入" class="headerlink" title="希望你的加入"></a>希望你的加入</h2><p>* </p><p>* </p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h2 id=&quot;自我介绍&quot;&gt;&lt;a href=&quot;#自我介绍&quot; class=&quot;headerlink&quot; title=&quot;自我介绍&quot;&gt;&lt;/a&gt;自我介绍&lt;/h2&gt;&lt;p&gt;无论你遇见谁，他&amp;#x2F;她都是你生命中该出现的人，绝非偶然，他&amp;#x2F;她一定会教会你一些什么。所以你要相信， 无论你</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>欢迎来到我的世界</title>
+    <link href="https://guudman.github.io/2023/09/08/%E4%B8%96%E7%95%8C%EF%BC%8C%E4%BD%A0%E5%A5%BD/"/>
+    <id>https://guudman.github.io/2023/09/08/%E4%B8%96%E7%95%8C%EF%BC%8C%E4%BD%A0%E5%A5%BD/</id>
+    <published>2023-09-08T08:39:39.830Z</published>
+    <updated>2023-09-09T07:50:49.347Z</updated>
+    
+    <content type="html"><![CDATA[<p>感谢你的到来，这是我的个人博客，后续会不定期更新个人笔记。</p><p>有任何想要沟通交流的，可以通过邮箱<a href="mailto:&#50;&#54;&#54;&#x33;&#48;&#x31;&#x37;&#x33;&#x37;&#57;&#x40;&#x71;&#x71;&#x2e;&#99;&#111;&#109;">&#50;&#54;&#54;&#x33;&#48;&#x31;&#x37;&#x33;&#x37;&#57;&#x40;&#x71;&#x71;&#x2e;&#99;&#111;&#109;</a>联系。我的[GitHub](<a href="https://github.com/GuudMan/">GuudMan (github.com)</a>).</p><h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p><h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p><h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p><h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;感谢你的到来，这是我的个人博客，后续会不定期更新个人笔记。&lt;/p&gt;
+&lt;p&gt;有任何想要沟通交流的，可以通过邮箱&lt;a href=&quot;mailto:&amp;#50;&amp;#54;&amp;#54;&amp;#x33;&amp;#48;&amp;#x31;&amp;#x37;&amp;#x33;&amp;#x37;&amp;#57;&amp;#x40;&amp;#x71;</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+</feed>
