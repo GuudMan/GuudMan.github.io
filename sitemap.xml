@@ -58,7 +58,7 @@
 
   <url>
     <loc>https://guudman.github.io/</loc>
-    <lastmod>2023-09-11</lastmod>
+    <lastmod>2023-09-12</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -66,7 +66,7 @@
   
   <url>
     <loc>https://guudman.github.io/tags/neo4j/</loc>
-    <lastmod>2023-09-11</lastmod>
+    <lastmod>2023-09-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
