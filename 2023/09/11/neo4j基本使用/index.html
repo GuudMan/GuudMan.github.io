@@ -7,7 +7,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://guudman.github.io/images/background.jpg">
 <meta property="article:published_time" content="2023-09-11T11:09:51.000Z">
-<meta property="article:modified_time" content="2023-09-11T11:25:44.013Z">
+<meta property="article:modified_time" content="2023-09-12T17:33:59.379Z">
 <meta property="article:author" content="Neng Peng">
 <meta property="article:tag" content="neo4j">
 <meta name="twitter:card" content="summary">
@@ -53,7 +53,7 @@
   isHome: false,
   isHighlightShrink: false,
   isToc: true,
-  postUpdate: '2023-09-11 19:25:44'
+  postUpdate: '2023-09-13 01:33:59'
 }</script><noscript><style type="text/css">
   #nav {
     opacity: 1
@@ -145,17 +145,17 @@
 <p>2 relationship关系基本语法： Relationship((start_node, type, end_node, **properties)</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 添加关系</span></span><br><span class="line">node_1_to_node_2 = Relationship(node_1, <span class="string">&#x27;教主&#x27;</span>, node_2)</span><br><span class="line">node_3_to_node_1 = Relationship(node_3, <span class="string">&#x27;统领&#x27;</span>, node_1)</span><br><span class="line">node_2_to_node_3 = Relationship(node_2, <span class="string">&#x27;师出&#x27;</span>, node_3)</span><br><span class="line">graph.create(node_1_to_node_2)</span><br><span class="line">graph.create(node_3_to_node_1)</span><br><span class="line">graph.create(node_2_to_node_3)</span><br></pre></td></tr></table></figure>
 
-<p><img src="/images/neo4j%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8.assets%5C1692668510722-f9833f06-967c-46c2-b96a-691de7332604.png"></p>
+<p><img src="/images/1692668510722-f9833f06-967c-46c2-b96a-691de7332604.png"></p>
 <ol>
 <li>Path路径，基本语法：Path(*entities), 注意entities是实体(关系，节点都可以作为实体)</li>
 </ol>
-<p><img src="/2023/09/11/neo4j%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/neo4j%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8.assets%5C1692668994710-e1991773-6b57-4b22-8471-ff8e25e395e5.png" alt="img"></p>
+<p><img src="/images/1692668994710-e1991773-6b57-4b22-8471-ff8e25e395e5.png" alt="img"></p>
 <ol>
 <li>Subgraph:子图是节点和关系的任意集合，它也是Node, Relationship和Path的基类， 基本语法：Subgraph(nodes, relationships)。 空子图表示为None, 使用bool()可以测试是否为空，参数要按数组输入，如下面代码：</li>
 </ol>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建子图，通过子图的方式更新数据库</span></span><br><span class="line">node_7 = Node(<span class="string">&#x27;英雄&#x27;</span>, name=<span class="string">&#x27;张翠山&#x27;</span>)</span><br><span class="line">node_8 = Node(<span class="string">&#x27;英雄&#x27;</span>, name=<span class="string">&#x27;殷素素&#x27;</span>)</span><br><span class="line">node_9 = Node(<span class="string">&#x27;英雄&#x27;</span>, name=<span class="string">&#x27;狮王&#x27;</span>)</span><br><span class="line"></span><br><span class="line">relationship7 = Relationship(node_1, <span class="string">&#x27;生父&#x27;</span>, node_7)</span><br><span class="line">relationship8 = Relationship(node_1, <span class="string">&#x27;生母&#x27;</span>, node_8)</span><br><span class="line">relationship9 = Relationship(node_1, <span class="string">&#x27;义父&#x27;</span>, node_9)</span><br><span class="line">subgraph_1 = Subgraph(nodes=[node_7, node_8, node_9],</span><br><span class="line">                      relationships=[relationship7, relationship8, relationship9])</span><br><span class="line">graph.create(subgraph_1)</span><br></pre></td></tr></table></figure>
 
-<p><img src="/images/neo4j%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8.assets%5C1692669527475-c9d0a0dc-9d4d-4ffd-98ed-a9afeb17a4b5.png"></p>
+<p><img src="/images/1692669527475-c9d0a0dc-9d4d-4ffd-98ed-a9afeb17a4b5.png"></p>
 <p>工作流</p>
 <ol>
 <li>GraphService: 基于图服务的工作流</li>
@@ -165,7 +165,7 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建一个新事务</span></span><br><span class="line">transcation_1 = graph.begin()</span><br><span class="line"><span class="comment"># 创建一个新Node</span></span><br><span class="line">node_10 = Node(<span class="string">&#x27;武当&#x27;</span>, name=<span class="string">&#x27;张三丰&#x27;</span>)</span><br><span class="line">transcation_1.create(node_10)</span><br><span class="line"><span class="comment"># 创建两个关系: 张无忌-&gt;(师公)-&gt;张三丰 张翠山-&gt;(妻子)-&gt;殷素素</span></span><br><span class="line">relationship10 = Relationship(node_1, <span class="string">&#x27;师公&#x27;</span>, node_10)</span><br><span class="line">relationship11 = Relationship(node_7, <span class="string">&#x27;妻子&#x27;</span>, node_8)</span><br><span class="line">transcation_1.create(relationship10)</span><br><span class="line">transcation_1.create(relationship11)</span><br><span class="line">transcation_1.commit()</span><br></pre></td></tr></table></figure>
 
 <p>一个transaction增加的一个节点和两个关系</p>
-<p><img src="/images/neo4j%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8.assets%5C1692670406583-378901a5-73a1-4897-b269-2913bec75ad8.png"></p>
+<p><img src="/images/1692670406583-378901a5-73a1-4897-b269-2913bec75ad8.png"></p>
 <p>删</p>
 <ol>
 <li>删除数据库中所有的节点和关系: graph.delete_all()</li>
@@ -180,7 +180,7 @@
 <p>查询，按照路径、节点、关系等查询</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 为了方便查询更多内容，新增一些关系和节点</span></span><br><span class="line">transcation_2 = graph.begin()</span><br><span class="line">node_100 = Node(<span class="string">&#x27;巾帼&#x27;</span>, name=<span class="string">&#x27;赵敏&#x27;</span>)</span><br><span class="line">re_100 = Relationship(node_1, <span class="string">&#x27;Love&#x27;</span>, node_100)</span><br><span class="line"></span><br><span class="line">node_101 = Node(<span class="string">&#x27;巾帼&#x27;</span>, name=<span class="string">&#x27;周芷若&#x27;</span>)</span><br><span class="line">re_101 = Relationship(node_1, <span class="string">&#x27;knows&#x27;</span>, node_101)</span><br><span class="line">re_101_ = Relationship(node_101, <span class="string">&#x27;hate&#x27;</span>, node_100)</span><br><span class="line"></span><br><span class="line">node_102 = Node(<span class="string">&#x27;巾帼&#x27;</span>, name=<span class="string">&#x27;小昭&#x27;</span>)</span><br><span class="line">re_102 = Relationship(node_1, <span class="string">&#x27;knows&#x27;</span>, node_102)</span><br><span class="line"></span><br><span class="line">node_103 = Node(<span class="string">&#x27;巾帼&#x27;</span>, name=<span class="string">&#x27;蛛儿&#x27;</span>)</span><br><span class="line">re_103 = Relationship(node_103, <span class="string">&#x27;Love&#x27;</span>, node_1)</span><br><span class="line">transcation_2.create(node_100)</span><br><span class="line">transcation_2.create(re_100)</span><br><span class="line"></span><br><span class="line">transcation_2.create(node_101)</span><br><span class="line">transcation_2.create(re_101)</span><br><span class="line">transcation_2.create(re_101_)</span><br><span class="line"></span><br><span class="line">transcation_2.create(node_102)</span><br><span class="line">transcation_2.create(re_102)</span><br><span class="line"></span><br><span class="line">transcation_2.create(node_103)</span><br><span class="line">transcation_2.create(re_103)</span><br><span class="line">transcation_2.commit()</span><br></pre></td></tr></table></figure>
 
-<p><img src="/images/neo4j%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8.assets%5C1692672097202-eba07f27-1ef1-4c02-87ee-4c00d87b949d.png"></p>
+<p><img src="/images/1692672097202-eba07f27-1ef1-4c02-87ee-4c00d87b949d.png"></p>
 <p>NodeMatcher: 定位满足特定条件的节点，基本语法：NodeMatcher(graph).match(*labels, **properties)， </p>
 <table>
 <thead>
