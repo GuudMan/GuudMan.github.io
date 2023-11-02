@@ -6,7 +6,7 @@
   <link href="https://guudman.github.io/atom.xml" rel="self"/>
   
   <link href="https://guudman.github.io/"/>
-  <updated>2023-11-02T11:59:41.964Z</updated>
+  <updated>2023-11-02T12:08:57.969Z</updated>
   <id>https://guudman.github.io/</id>
   
   <author>
@@ -15,6 +15,28 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>深度学习中的卷积</title>
+    <link href="https://guudman.github.io/2023/11/02/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E5%8D%B7%E7%A7%AF/"/>
+    <id>https://guudman.github.io/2023/11/02/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E5%8D%B7%E7%A7%AF/</id>
+    <published>2023-11-02T12:07:13.000Z</published>
+    <updated>2023-11-02T12:08:57.969Z</updated>
+    
+    <content type="html"><![CDATA[<h4 id="深度学习中什么是卷积，-它是如何工作的"><a href="#深度学习中什么是卷积，-它是如何工作的" class="headerlink" title="深度学习中什么是卷积， 它是如何工作的"></a>深度学习中什么是卷积， 它是如何工作的</h4><h5 id="1、数学物理层面"><a href="#1、数学物理层面" class="headerlink" title="1、数学物理层面"></a>1、数学物理层面</h5><p>数学上，连续卷积的定义如下：</p><p>(f * g)(t) &#x3D; ∫[f(τ) * g(t - τ)] dτ</p><p>其中，* 表示卷积操作，f(t) 和 g(t) 是两个函数，(f * g)(t) 是它们的卷积结果。</p><p>它的物理含义可以理解为：系统某一时刻的输出是由多个输入共同作用（叠加）的结果。</p><p>具体解释如下：</p><p>假设有两个物理量（例如信号，场或系统响应等），可用公式中的函数f(t) 和 g(t)表示。在物理上，卷积大概可以理解为：系统某一时刻的输出是由多个输入共同作用(叠加)的结果。</p><p>g(t) 是系统的响应函数（或滤波器）。它描述了系统对输入信号 f(t) 的响应方式。g(t) 中的每一个值表示了在时间 t 时，系统对输入信号的加权响应。</p><p>在卷积过程中，我们考虑了 f(t) 中的每个时间点 τ，并将其与 g(t - τ) 相乘。这相当于在时间轴上对 g(t - τ) 进行了平移，然后与 f(t) 相乘。这个过程捕捉了在不同时间点上，系统响应函数 g(t) 对输入信号 f(t) 的影响。</p><p>最后，通过对所有时间点的乘积进行积分，我们将所有加权的响应值进行累加。这就得到了在每个时间点 t 上的卷积结果 (f * g)(t)。该结果描述了输入信号 f(t) 通过系统响应函数 g(t) 后的响应情况。</p><p>因此，卷积公式提供了一种描述系统响应、信号传播和叠加效应的数学工具。它在物理学中被广泛应用，例如信号处理、系统响应分析、场的传播和滤波器设计等领域。</p><h5 id="2、图像层面"><a href="#2、图像层面" class="headerlink" title="2、图像层面"></a>2、图像层面</h5><p>在深度学习中，卷积层是神经网络中一种常用的操作，它使用卷积运算对输入数据进行特征提取。卷积层的数学公式可以通过以下方式解释：</p><p>假设输入数据是一个三维张量，具有形状为 [H, W, C]，其中 H 表示高度，W 表示宽度，C 表示通道数。卷积层使用一组称为卷积核（或过滤器）的权重来对输入进行卷积操作。</p><p>假设卷积核的形状为 [FH, FW, C, K]，其中 FH 和 FW 表示卷积核的高度和宽度，C 表示输入的通道数，K 表示卷积核的数量（也称为输出通道数）。一般而言，在图像领域，卷积核的高度和宽度相等，常见的设置有3x3、5x5、7x7等。</p><p>卷积操作的数学公式可以表示为：</p><p>输出特征图的某个位置的数值 &#x3D; sum(输入特征图的对应位置 * 卷积核的权重) + 偏置</p><p>具体而言，对于输出特征图的每个位置 (i, j, k)，其中 i 表示高度索引，j 表示宽度索引，k 表示通道索引，卷积操作可以表示为：</p><p>输出特征图[i, j, k] &#x3D; sum(sum(sum(输入特征图[m, n, c] * 卷积核[m, n, c, k]))) + 偏置[k]</p><p>其中，m 和 n 表示卷积核的高度和宽度索引，c 表示输入特征图的通道索引。</p><p>这个公式说明了卷积操作的过程。在每个位置 (i, j, k)，输入特征图与卷积核的对应位置进行逐元素相乘，然后将所有乘积相加。这相当于对输入特征图的局部区域与卷积核进行加权叠加，得到输出特征图的对应位置。</p><p>最后，可以通过添加偏置项来调整输出特征图的整体偏移量。偏置项在公式中表示为偏置[k]，其中 k 表示输出通道索引。</p><p>下面是一个大小为3x3的卷积核，步长为1的二维卷积示意图：</p><p><img src="/images/1686225397566-562949ca-4f3c-406e-886d-2f002a45b604.gif" alt="img"></p><p>可以看到3x3的卷积核以滑动窗口的形式在输入通道上滑动，并通过某种计算得到上面的输出值，每一个卷积核在一个位置会得到一个输出值，按照卷积核的移动顺序形成的输出矩阵。这是最直观的卷积形式。</p><p>具体计算的过程如下所示：</p><p><img src="/images/1686225862279-5bd2416b-b451-42dd-b5ea-98c5a8fbc9d8.png" alt="img"></p><p>卷积核在原始输入矩阵所覆盖区域对应元素相乘然后相加。</p><p>对于一个图片而言，一般的图片是三通道图片，即包含RGB三个通道，对一个图片的卷积计算，它是如何完成的呢？</p><p><img src="/images/1686226136566-f82570d7-9a1e-4c36-aad3-f256de218fe0.gif" alt="img"></p><p>具体计算过程解释如下：</p><p>首先将三通道图片切分成三个单通道，这里标记为B、G、R三个通道。B、G、R三个通道分别与对应的卷积核进行卷积计算，然后再通过偏置叠加在一起。这个就得到了三通道图片的卷积。</p><h5 id="3、卷积中的参数"><a href="#3、卷积中的参数" class="headerlink" title="3、卷积中的参数"></a>3、卷积中的参数</h5><p>以一个3x3卷积核为例，该卷积核中有9个参数，那么这9个参数是怎么来的呢？卷积核的个数又是什么呢？</p><p>其实卷积核中有9个参数也是作为超参数通过模型训练得到的，一个训练好的卷积核可以更好的提取图像的特征。</p><p>常见的初始化方法可以为恺明初始化。</p><p>如下是pytorch中搭建模型时常用的初始化方式：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">_initialize_weights</span>(<span class="params">self</span>):</span><br><span class="line">    <span class="keyword">for</span> m <span class="keyword">in</span> self.modules():</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">isinstance</span>(m, nn.Conv2d):</span><br><span class="line">            nn.init.kaiming_normal_(m.weight, mode=<span class="string">&quot;fan_out&quot;</span>, nonlinearity=<span class="string">&quot;relu&quot;</span>)</span><br><span class="line">        <span class="keyword">elif</span> <span class="built_in">isinstance</span>(m, nn.Linear):</span><br><span class="line">            nn.init.normal(m.weight, <span class="number">0</span>, <span class="number">0.01</span>)</span><br><span class="line">            nn.init.constant_(m.bias, <span class="number">0</span>)</span><br></pre></td></tr></table></figure><p>对单通道的图片卷积过程，卷积核的个数，其实就是卷积之后输出通道的个数。而对于三通道的卷积过程，卷积核的个数等于输出通道数*输入通道数。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h4 id=&quot;深度学习中什么是卷积，-它是如何工作的&quot;&gt;&lt;a href=&quot;#深度学习中什么是卷积，-它是如何工作的&quot; class=&quot;headerlink&quot; title=&quot;深度学习中什么是卷积， 它是如何工作的&quot;&gt;&lt;/a&gt;深度学习中什么是卷积， 它是如何工作的&lt;/h4&gt;&lt;h5 i</summary>
+      
+    
+    
+    
+    
+    <category term="卷积" scheme="https://guudman.github.io/tags/%E5%8D%B7%E7%A7%AF/"/>
+    
+  </entry>
   
   <entry>
     <title>pytorch全连接层模拟回归</title>
