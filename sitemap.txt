@@ -1,3 +1,4 @@
+https://guudman.github.io/2023/11/02/pytorch%E5%85%A8%E8%BF%9E%E6%8E%A5%E5%B1%82%E6%A8%A1%E6%8B%9F%E5%9B%9E%E5%BD%92/
 https://guudman.github.io/2023/11/02/GoogleNet%E8%A7%A3%E6%9E%90/
 https://guudman.github.io/2023/11/02/VggNet%E8%A7%A3%E6%9E%90/
 https://guudman.github.io/2023/11/02/AlexNet%E8%A7%A3%E6%9E%90/
@@ -11,4 +12,5 @@ https://guudman.github.io/gedan/index.html
 https://guudman.github.io/
 https://guudman.github.io/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/
 https://guudman.github.io/tags/neo4j/
+https://guudman.github.io/tags/pytorch/
 https://guudman.github.io/tags/%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/
