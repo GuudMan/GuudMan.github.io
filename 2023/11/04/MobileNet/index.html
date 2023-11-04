@@ -1,0 +1,159 @@
+<!DOCTYPE html><html lang="zh-cn" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>MobileNet</title><meta name="keywords" content="深度学习"><meta name="author" content="Neng Peng"><meta name="copyright" content="Neng Peng"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="1、简介在之前的文章中讲的AlexNet， VGG， GoogleNet以及ResNet网络， 它们都是传统卷积神经网络（都是使用传统卷积层），缺点是内存需求大、运算量大而导致无法在移动设备以及嵌入式设备上运行， 这里要讲的MobileNet网络就是专门为移动端，嵌入式端而设计的。 1、MobileNetv1MobileNet模型是Google在2017年针对手机或嵌入式提出的轻量级模型， 专">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MobileNet">
+<meta property="og:url" content="https://guudman.github.io/2023/11/04/MobileNet/index.html">
+<meta property="og:site_name" content="彭能的博客">
+<meta property="og:description" content="1、简介在之前的文章中讲的AlexNet， VGG， GoogleNet以及ResNet网络， 它们都是传统卷积神经网络（都是使用传统卷积层），缺点是内存需求大、运算量大而导致无法在移动设备以及嵌入式设备上运行， 这里要讲的MobileNet网络就是专门为移动端，嵌入式端而设计的。 1、MobileNetv1MobileNet模型是Google在2017年针对手机或嵌入式提出的轻量级模型， 专">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/guudman/blog_images/raw/master/river.jpg">
+<meta property="article:published_time" content="2023-11-04T01:32:47.000Z">
+<meta property="article:modified_time" content="2023-11-04T06:26:34.024Z">
+<meta property="article:author" content="Neng Peng">
+<meta property="article:tag" content="深度学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/guudman/blog_images/raw/master/river.jpg"><link rel="shortcut icon" href="https://gitee.com/guudman/blog_images/raw/master/favicon.png"><link rel="canonical" href="https://guudman.github.io/2023/11/04/MobileNet/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":500},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"Author: Neng Peng","link":"Link: ","source":"Source: 彭能的博客","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source."}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://fastly.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://fastly.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'MobileNet',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-11-04 14:26:34'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="彭能的博客" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="is-center"><div class="avatar-img"><img src="https://gitee.com/guudman/blog_images/raw/master/avatar.jpg" onerror="onerror=null;src='https://gitee.com/guudman/blog_images/raw/master/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Neng Peng</div><div class="author-info__description">Not Only Look Once</div></div><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/GuudMan" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:2663017379@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-clock"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/gedan"><i class="fa-fw fas fa-music"></i><span> 歌单</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk"><i class="fa-fw fa fa-heartbeat"></i><span> 时光</span></a></div><div class="menus_item"><a class="site-page" href="/shuoba"><i class="fa-fw fas fa-comment-dots"></i><span> 说吧</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-tools"></i><span> 工具</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/google"><span> 镜像</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://json.xbyzs.cf"><span> Json格式化</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://draw.xbyzs.cf"><span> Draw画布</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://enkey.xbyzs.cf"><span> EnKey</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">彭能的博客</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-clock"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/gedan"><i class="fa-fw fas fa-music"></i><span> 歌单</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk"><i class="fa-fw fa fa-heartbeat"></i><span> 时光</span></a></div><div class="menus_item"><a class="site-page" href="/shuoba"><i class="fa-fw fas fa-comment-dots"></i><span> 说吧</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-tools"></i><span> 工具</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/google"><span> 镜像</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://json.xbyzs.cf"><span> Json格式化</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://draw.xbyzs.cf"><span> Draw画布</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://enkey.xbyzs.cf"><span> EnKey</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">MobileNet</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2023-11-04T01:32:47.000Z" title="Created 2023-11-04 09:32:47">2023-11-04</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2023-11-04T06:26:34.024Z" title="Updated 2023-11-04 14:26:34">2023-11-04</time></span></div><div class="meta-secondline"></div></div></div><article class="post-content" id="article-container"><meta name="referrer" content="no-referrer">
+
+<h4 id="1、简介"><a href="#1、简介" class="headerlink" title="1、简介"></a>1、简介</h4><p>在之前的文章中讲的AlexNet， VGG， GoogleNet以及ResNet网络， 它们都是传统卷积神经网络（都是使用传统卷积层），缺点是<strong>内存需求大、运算量大而导致无法在移动设备以及嵌入式设备上运行</strong>， 这里要讲的MobileNet网络就是专门为移动端，嵌入式端而设计的。</p>
+<h5 id="1、MobileNetv1"><a href="#1、MobileNetv1" class="headerlink" title="1、MobileNetv1"></a>1、<strong>MobileNetv1</strong></h5><p>MobileNet模型是Google在2017年针对手机或嵌入式提出的轻量级模型， 专注于移动端或嵌入式设备中的轻量级CNN网络。相比于传统卷积神经网络， 在准确率小幅度降低的前提下大大减少模型参数与运算量。(相比VGG16准确率减少了0.9%,但模型参数只有VGG的1&#x2F;32)</p>
+<p>要说MobileNet网络的优点， 无疑是其中的Depthwise  Convolution结构（大大减少了运算量和参数数量)。下图展示了传统卷积与DW卷积的差异。在传统卷积中， 每个卷积核的channel与输入特征矩阵的channel相等(每个卷积核都会与输入特征矩阵的每一个维度进行卷积运算)。 </p>
+<p>而在DW卷积中， 每个卷积核的channel都是等于1的(每个卷积核只负责输入特征矩阵的一个channel， 故卷积核的个数必须等于输入特征矩阵的channel， 从而使得输出特征矩阵的channel数也等于输入特征矩阵的channel数)</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231103154737433.png" alt="image"></p>
+<p>刚刚说了使用DW卷积后输出特征矩阵的channel是与输入特征矩阵的channel是相等的， 如果想改变&#x2F;自定义输出特征矩阵的channel， 那只需要在DW卷积后接一个PW卷积即可。如下图所示， 其实PW卷积就是普通的卷积而已(只不过卷积核大小为1)。通常DW卷积和PW卷积是放在一起使用的， 一起叫作Depthwise Separable Convolution（深度可分离卷积）</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231103155138897.png" alt="image"></p>
+<p>那Depthwise Separable Convolution（深度可分离卷积)与传统的卷积相比到底能节省多少计算量呢？</p>
+<p>下面对比了这两个卷积方式的计算量， 其中Df是输入特征矩阵的宽高（这里假设宽和高相等）, Dk是卷积核的大小， M是输入特征矩阵的channel， N是输出特征矩阵的channel， 卷积计算量近似等于卷积核的高 × 卷积核的宽 × 卷积核的channel ×输入特征矩阵的高 × 输入特征矩阵的宽（假设stride&#x3D;1）。在mobilenet网络中，DW卷积都是使用3x3大小的卷积核， 所以理论上普通卷积计算量是DW+PW卷积的8到9倍。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231103155948407.png" alt="image"></p>
+<p>下面分析一下mobilenet v1的网络结构， 左侧的表格是mobilenet v1的网络结构， 表中Conv表示普通卷积， Conv dw代表上面提到的DW卷积， s表示步距， 根据表格信息就能搭建出mobilenet v1网络。 在mobilenet v1原论文中， 还提出了两个超参数， 一个是$$\alpha$$， 一个是$$\beta$$,  $$\alpha$$参数是一个倍率因子， 用来调整卷积核的个数， $$\beta$$是控制输入网络的图像尺寸参数。下图右侧给出了使用不同$$\alpha$$和$$\beta$$网络的分类准确率、计算量以及模型参数。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231103160611687.png" alt="image"></p>
+<h5 id="2、MobileNet-V2"><a href="#2、MobileNet-V2" class="headerlink" title="2、MobileNet V2"></a>2、<strong>MobileNet V2</strong></h5><p>在MobileNet v1的网络结构中能够发现， 网络的结构就像VGG一样是个直筒型的， 不像ResNet网络有shortcut连接方式， 而有人反映说MobileNet v1网络中DW卷积在训练时很容易废掉， 效果并没有那么理想。下一接下来看MobileNet v2网络。 </p>
+<p>MobileNet v2网络是由google团队在2018年提出，相比MobileNet v1网络，准确率更高， 模型更小。 上面提到， MobileNet v1网络的亮点是DW卷积， 那么在MobileNet v2中的亮点是Inverted residual block（倒残差结构）, 如下图所示， 左侧是ResNet网络中的残差结构，右侧是Mobile Net v2中的倒残差结构。在残差结构中是1x1卷积降维-&gt;3x3卷积-&gt;1x1卷积升维， 在倒残差结构中正好相反， 是1x1卷积升维-&gt;3x3卷积-&gt;1x1卷积降维。 </p>
+<p>为什么要这么做， 原文的解释是高维信息通过ReLU激活函数后丢失的信息更少（注意倒残差结构中基本使用的是ReLU6激活函数， 但是最后一个1x1的卷积层使用的是线性激活函数）</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231103170530054.png" alt="image"></p>
+<p>在使用倒残差结构时需要注意， 并不是所有的倒残差结构都有shortcut连接， 只有当stride&#x3D;1且输入特征矩阵与输出特征矩阵shape相同时才有shortcut连接（只有当shape相同时， 两个矩阵才有加法运算， 当stride&#x3D;1时并不能保证输入特征矩阵的channel与输出特征矩阵的channel相同）</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231103171132298.png" alt="image"></p>
+<p>下图是MobileNet v2网络的结构表， 其中t代表的是扩展因子（倒残差结构中第一个1x1卷积的扩展因子）， c代表输出特征矩阵的channel， n代表倒残差结构重复的次数， s代表步距(注意：这里的步距只是针对重复n次的第一层倒残差结构，后面的都默认为1)</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231104091906806.png" alt="image"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">Neng Peng</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://guudman.github.io/2023/11/04/MobileNet/">https://guudman.github.io/2023/11/04/MobileNet/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post_share"><div class="social-share" data-image="https://gitee.com/guudman/blog_images/raw/master/river.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://fastly.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2023/11/04/ResNet/"><img class="next-cover" src="https://gitee.com/guudman/blog_images/raw/master/cow.jpg" onerror="onerror=null;src='https://gitee.com/guudman/blog_images/raw/master/article.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">ResNet</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2023/11/02/AlexNet%E8%A7%A3%E6%9E%90/" title="AlexNet解析"><img class="cover" src="https://gitee.com/guudman/blog_images/raw/master/article.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-11-02</div><div class="title">AlexNet解析</div></div></a></div><div><a href="/2023/11/04/BatchNormalization/" title="BatchNormalization"><img class="cover" src="https://gitee.com/guudman/blog_images/raw/master/river.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-11-04</div><div class="title">BatchNormalization</div></div></a></div><div><a href="/2023/11/02/GoogleNet%E8%A7%A3%E6%9E%90/" title="GoogleNet解析"><img class="cover" src="https://gitee.com/guudman/blog_images/raw/master/river.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-11-02</div><div class="title">GoogleNet解析</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81%E7%AE%80%E4%BB%8B"><span class="toc-number">1.</span> <span class="toc-text">1、简介</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1%E3%80%81MobileNetv1"><span class="toc-number">1.1.</span> <span class="toc-text">1、MobileNetv1</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2%E3%80%81MobileNet-V2"><span class="toc-number">1.2.</span> <span class="toc-text">2、MobileNet V2</span></a></li></ol></li></ol></div></div><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://gitee.com/guudman/blog_images/raw/master/avatar.jpg" onerror="this.onerror=null;this.src='https://gitee.com/guudman/blog_images/raw/master/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Neng Peng</div><div class="author-info__description">Not Only Look Once</div></div><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/GuudMan" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:2663017379@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>Announcement</span></div><div class="announcement_content">微信公众号: 预留，暂未开通</div></div></div></div></main><footer id="footer" style="background: #FFFFFF"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2023 By Neng Peng</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/chenxz21/hexo-theme-bcxm">Bcxm</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="Toggle Between Light And Dark Mode"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://fastly.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"></div><script type="text/javascript" src="https://fastly.jsdelivr.net/npm/leancloud-storage@4.10.0/dist/av-min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://fastly.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><script id="click-heart" src="https://fastly.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script async>window.onload=function(){var a=document.createElement('script'),b=document.getElementsByTagName('script')[0];a.type='text/javascript',a.async=!0,a.src='/sw-register.js?v='+Date.now(),b.parentNode.insertBefore(a,b)};</script></body></html>
