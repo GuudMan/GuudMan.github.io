@@ -1,6 +1,6 @@
+https://guudman.github.io/2023/11/04/BatchNormalization/
 https://guudman.github.io/2023/11/02/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E5%8D%B7%E7%A7%AF/
 https://guudman.github.io/2023/11/02/AlexNet%E8%A7%A3%E6%9E%90/
-https://guudman.github.io/2023/11/04/BatchNormalization/
 https://guudman.github.io/2023/11/02/GoogleNet%E8%A7%A3%E6%9E%90/
 https://guudman.github.io/2023/11/04/MobileNet/
 https://guudman.github.io/2023/09/11/neo4j%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/
