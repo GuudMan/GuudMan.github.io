@@ -6,7 +6,7 @@
   <link href="https://guudman.github.io/atom.xml" rel="self"/>
   
   <link href="https://guudman.github.io/"/>
-  <updated>2023-11-04T09:38:10.571Z</updated>
+  <updated>2023-11-05T03:15:16.157Z</updated>
   <id>https://guudman.github.io/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>VisionTransformer</title>
+    <link href="https://guudman.github.io/2023/11/05/VisionTransformer/"/>
+    <id>https://guudman.github.io/2023/11/05/VisionTransformer/</id>
+    <published>2023-11-05T03:13:51.000Z</published>
+    <updated>2023-11-05T03:15:16.157Z</updated>
+    
+    <content type="html"><![CDATA[<meta name="referrer" content="no-referrer"><h4 id="1、简介"><a href="#1、简介" class="headerlink" title="1、简介"></a>1、简介</h4><p>论文原文：<a href="[[2010.11929\] An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale (arxiv.org">Vit</a>](<a href="https://arxiv.org/abs/2010.11929">https://arxiv.org/abs/2010.11929</a>))</p><p>Transformer最初是针对NLP领域提出的， 并且在NLP领域大获成功。Vision-Transformer尝试将Transformer应用到CV领域。通过原论文中的实验发现，论文给出的模型在ImageNet1k上能够达到88.55%的准确率， 说明Transformer在CV领域确实能取得不错的效果。</p><p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231105093844437.png" alt="image-20231105093844437"></p><hr><h4 id="2、模型详解"><a href="#2、模型详解" class="headerlink" title="2、模型详解"></a>2、模型详解</h4><p>原论文中，作者主要拿ResNet， Vit(纯Transformer模型)以及Hybrid（卷积和Transformer混合模型）三个模型进行比较。</p><p>下图是原论文中Vit的模型架构， 简单而言， 模型由三部分组成：</p><p>1、Linear Project of Flattened Patches(Embedding层)</p><p>2、Transformers Encoder(图右侧给出更加详细的结构)</p><p>3、MLP Head（用于分类的层结构）</p><p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231105094454791.png" alt="image-20231105094454791"></p><h5 id="Embedding层结构"><a href="#Embedding层结构" class="headerlink" title="Embedding层结构"></a>Embedding层结构</h5><p>对于标准的Transformers模块， 要求输入的是token（向量）序列， 即二维矩阵[num_token, token_dim]， 如下图， token0-9对应的都是向量， 以Vit-B/16为例， 每个token向量长度为768。</p><p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231105094748766.png" alt="image-20231105094748766"></p><p>对于图像数据而言， 其数据格式为[H, W, C]， 它是三维矩阵形式， 该形式明显不是Transformer想要的， 所以首先要通过Embedding层对数据做变换。如下图所示， 首先将一张图片按给定大小分成一堆patches。以Vit-B/16为例， 将输入图片(224×224)按照16×16大小的Patch进行划分， 划分后得到<script type="math/tex">(224/16)^2=196</script>个Patches。接着通过线性映射将每个Patch映射到一维向量中， 每个Patches数据shape[16, 16, 3]， 通过映射得到长度为768的向量（后面直接称为token)。<font color="red">[16, 16, 3]-&gt;[768]</font>&gt;。</p><p><strong>在代码实现中，直接通过一个卷积层来实现</strong>, 以Vit-B/16为例， 直接使用一个卷积核大小为16×16， 步距为16， 卷积核个数为768的卷积来实现。通过卷积<font color="red">[224, 224, 3] -&gt;[14, 14, 768]</font>, 然后把H以及W两个维度展平即可：<font color="red">[14, 14, 768]-&gt;[194, 768]</font>,此时正好变成了一个二维矩阵， 正式Transformers想要的。</p><p><strong>在输入Transformer Encoder之前需要加上[class]token以及Position Embedding</strong>。原论文中， 作者参考了Bert， 在刚刚得到的一堆tokens中插入一个专门用于分类的[class] token, 这个[class]token是一个可训练的参数， 数据格式和其他token一样都是一个向量， 以Vit-B/16为例， 就是一个长度为768的向量， 与之前从图片中生成的tokens拼接在一起。<font color="red">Cat([1, 768], [196, 768]) - &gt; [197, 768]</font>。Position Embedding与之前在Transformers中的Position Embedding一样， 直接叠加在tokens上(add)， 所以shape是一样的。刚刚拼接了[class] token之后的shape是<font color="red"> [197, 768]</font>, 所以这里的Position Embedding也是<font color="red"> [197, 768]</font>。</p><p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231105100949257.png" alt="image-20231105100949257"></p><p>对于Position Embedding作者也做了一系列对比实验， <strong>在源码中默认使用的是</strong> <font color="red">1D Pos. Emb.</font>, 对比不使用Position Embedding准确率大概提升了3个点。和<font color="red">2D Pos. Emb.</font>相比， 效果没有太大的差别。 </p><p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231105101257899.png" alt="image-20231105101257899"></p><hr><h5 id="Transformer-Encoder详解"><a href="#Transformer-Encoder详解" class="headerlink" title="Transformer Encoder详解"></a>Transformer Encoder详解</h5><p>Transformer Encode其实就是重复Encoder Block L次， 如下图所示，主要由以下几个部分组成。 </p><p>Layer Norm， 这种Normalization方法主要是针对NLP领域提出的， 这里是对每个token进行Norm处理。</p><p>Mliti-Head Attention， 与之前Transformers中讲解的一样， 这里不再赘述。 </p><p>Dropout/Droppath. 原论文的代码中直接使用的是Dropout层， 但在<font color="red">rwightman</font>实现的代码中使用的是DropPath(stochastic depth), 可能后者的效果更好一点。 </p><p>MLP Block， 就是全连接层+GELU激活函数+Dropout组成。 全连接层节点个数变化如下： <font color="red">[197, 768] -&gt; [197, 3072] -&gt; [197, 768]</font></p><p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231105102438613.png" alt="image-20231105102438613"></p><hr><h5 id="MLP-Head详解"><a href="#MLP-Head详解" class="headerlink" title="MLP Head详解"></a>MLP Head详解</h5><p>上面通过Transformers Encoder之后输入与输出的shape保持不变， 以Vit-B/16为例， 输入的是[197, 768]输出还是[197, 768]。 这里我们只需要分类的信息， 所以我们只需要提取出[class]token生成对应的结果捷星， 即从[197, 768]中提取[class token]对应的[1, 768]。 然后通过MLP Head得到最终的分类结果。 原论文中是由Linear + tanh激活函数+Linear组成。但是迁移到别的数据集上时只用一个Linear即可。 </p><p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231105103058460.png" alt="image-20231105103058460"></p><hr><h5 id="绘制自己的Vision-Transformers结构"><a href="#绘制自己的Vision-Transformers结构" class="headerlink" title="绘制自己的Vision Transformers结构"></a>绘制自己的Vision Transformers结构</h5><p><img src="https://gitee.com/guudman/blog_images/raw/master/VIT_16_b_2.jpg" alt="image-20231105103058460"></p><h5 id="Hybrid模型详解"><a href="#Hybrid模型详解" class="headerlink" title="Hybrid模型详解"></a>Hybrid模型详解</h5><p>原论文中详细介绍了Hybird混合模型， 就是将传统的CNN提取特征和Transformer进行结合。下图绘制的是以Resnet50作为特征提取器的混合模型，但是这里的resnet50与之前的有所不同，这里的resnet50采用的是stdconv2d而不是传统的conv2d， 然后将所有的batch Normalization换成了group norm层。 在原来的resnet50中， stage1重复堆叠3次， stage2重复堆叠4次， stage3重复堆叠6次， stage4重复堆叠3次。 但在这里的resnet50中， 把stage4中的3个Block移到了stage3中， 所以stage3中总共重复堆叠9次。 </p><p>通过R50 Backbone提取特征后， 得到的特征矩阵shape是[14, 14, 1014]， 接着再输入Patch Embedding层， 注意Patch Embedding中卷积层的Conv2d的kernel size都变成1， 只是用来调整channel， 后面的部分与前面的vit讲的完全一样，这里不再赘述。 </p><p><img src="https://gitee.com/guudman/blog_images/raw/master/VIT_16_b_Hybrid.jpg" alt="image-20231105103058460"></p><p>下表是论文中对比Vit, Resnet以及Hybrid模型的效果， 对比发现， 在训练epoch较少时， Hybrid效果优于Vit。</p><p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231105111111146.png" alt="image-20231105111111146"></p><h5 id="Vit模型参数"><a href="#Vit模型参数" class="headerlink" title="Vit模型参数"></a>Vit模型参数</h5><p>Layers是Transformer Encoder中重复堆叠Encoder Block的次数</p><p>Hidden Size是通过Embedding层后每个token的dim</p><p>MLP size是Transformer Encoder中MLP Block第一个全连接的节点个数(是Hidden Size的四倍)</p><p>Heads代表Transformer中Multi-Head Attention的heads数</p><p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231105111157839.png" alt="image-20231105111157839"></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;meta name=&quot;referrer&quot; content=&quot;no-referrer&quot;&gt;
+
+&lt;h4 id=&quot;1、简介&quot;&gt;&lt;a href=&quot;#1、简介&quot; class=&quot;headerlink&quot; title=&quot;1、简介&quot;&gt;&lt;/a&gt;1、简介&lt;/h4&gt;&lt;p&gt;论文原文：&lt;a href=&quot;[[</summary>
+      
+    
+    
+    
+    
+    <category term="深度学习" scheme="https://guudman.github.io/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    
+  </entry>
   
   <entry>
     <title>Transofrmer</title>
