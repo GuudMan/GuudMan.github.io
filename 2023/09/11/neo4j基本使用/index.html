@@ -1,0 +1,257 @@
+<!DOCTYPE html><html lang="zh-cn" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>neo4j基本使用</title><meta name="keywords" content="neo4j"><meta name="author" content="Neng Peng"><meta name="copyright" content="Neng Peng"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="1. neo4j数据类型1.Node: 节点， 基本语法：Node(label, *properties) 第一步：连接neo4j数据库 1234from py2neo import *url &#x3D; &quot;http:&#x2F;&#x2F;localhost:7474&quot;graph &#x3D; Graph(url, username&#x3D;&quot;neo4j&quot;, password&#x3D;&quot;szyh">
+<meta property="og:type" content="article">
+<meta property="og:title" content="neo4j基本使用">
+<meta property="og:url" content="https://guudman.github.io/2023/09/11/neo4j%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:site_name" content="彭能的博客">
+<meta property="og:description" content="1. neo4j数据类型1.Node: 节点， 基本语法：Node(label, *properties) 第一步：连接neo4j数据库 1234from py2neo import *url &#x3D; &quot;http:&#x2F;&#x2F;localhost:7474&quot;graph &#x3D; Graph(url, username&#x3D;&quot;neo4j&quot;, password&#x3D;&quot;szyh">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://guudman.github.io/img/cover/forest.jpg">
+<meta property="article:published_time" content="2023-09-11T11:09:51.000Z">
+<meta property="article:modified_time" content="2023-11-04T07:08:32.898Z">
+<meta property="article:author" content="Neng Peng">
+<meta property="article:tag" content="neo4j">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://guudman.github.io/img/cover/forest.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://guudman.github.io/2023/09/11/neo4j%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":500},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"Author: Neng Peng","link":"Link: ","source":"Source: 彭能的博客","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source."}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://fastly.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://fastly.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'neo4j基本使用',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-11-04 15:08:32'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="彭能的博客" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="onerror=null;src='https://gitee.com/guudman/blog_images/raw/master/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Neng Peng</div><div class="author-info__description">Not Only Look Once</div></div><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/GuudMan" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:2663017379@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-clock"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/gedan"><i class="fa-fw fas fa-music"></i><span> 歌单</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk"><i class="fa-fw fa fa-heartbeat"></i><span> 时光</span></a></div><div class="menus_item"><a class="site-page" href="/shuoba"><i class="fa-fw fas fa-comment-dots"></i><span> 说吧</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-tools"></i><span> 工具</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/google"><span> 镜像</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://json.xbyzs.cf"><span> Json格式化</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://draw.xbyzs.cf"><span> Draw画布</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://enkey.xbyzs.cf"><span> EnKey</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">彭能的博客</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-clock"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/gedan"><i class="fa-fw fas fa-music"></i><span> 歌单</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk"><i class="fa-fw fa fa-heartbeat"></i><span> 时光</span></a></div><div class="menus_item"><a class="site-page" href="/shuoba"><i class="fa-fw fas fa-comment-dots"></i><span> 说吧</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-tools"></i><span> 工具</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/google"><span> 镜像</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://json.xbyzs.cf"><span> Json格式化</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://draw.xbyzs.cf"><span> Draw画布</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://enkey.xbyzs.cf"><span> EnKey</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">neo4j基本使用</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2023-09-11T11:09:51.000Z" title="Created 2023-09-11 19:09:51">2023-09-11</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2023-11-04T07:08:32.898Z" title="Updated 2023-11-04 15:08:32">2023-11-04</time></span></div><div class="meta-secondline"></div></div></div><article class="post-content" id="article-container"><meta name="referrer" content="no-referrer">
+
+<h4 id="1-neo4j数据类型"><a href="#1-neo4j数据类型" class="headerlink" title="1. neo4j数据类型"></a>1. neo4j数据类型</h4><p>1.Node: 节点， 基本语法：Node(<em>label, *</em>properties)</p>
+<p>第一步：连接neo4j数据库</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> py2neo <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">url = <span class="string">&quot;http://localhost:7474&quot;</span></span><br><span class="line">graph = Graph(url, username=<span class="string">&quot;neo4j&quot;</span>, password=<span class="string">&quot;szyh&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>第二步：创建节点：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 建立节点</span></span><br><span class="line">node_1 = Node(<span class="string">&quot;英雄&quot;</span>, name=<span class="string">&quot;张无忌&quot;</span>)</span><br><span class="line">node_2 = Node(<span class="string">&quot;英雄&quot;</span>, name=<span class="string">&quot;杨道&quot;</span>, 武力值=<span class="string">&#x27;100&#x27;</span>)</span><br><span class="line">node_3 = Node(<span class="string">&quot;派别&quot;</span>, name=<span class="string">&quot;明教&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 存入图数据库</span></span><br><span class="line">graph.create(node_1)</span><br><span class="line">graph.create(node_2)</span><br><span class="line">graph.create(node_3)</span><br><span class="line"><span class="built_in">print</span>(node_1)</span><br></pre></td></tr></table></figure>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/1692668067239-e7227df7-867e-41ad-9cf6-fb6d85176385.png" alt="image"></p>
+<p>2 relationship关系基本语法： Relationship((start_node, type, end_node, **properties)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 添加关系</span></span><br><span class="line">node_1_to_node_2 = Relationship(node_1, <span class="string">&#x27;教主&#x27;</span>, node_2)</span><br><span class="line">node_3_to_node_1 = Relationship(node_3, <span class="string">&#x27;统领&#x27;</span>, node_1)</span><br><span class="line">node_2_to_node_3 = Relationship(node_2, <span class="string">&#x27;师出&#x27;</span>, node_3)</span><br><span class="line">graph.create(node_1_to_node_2)</span><br><span class="line">graph.create(node_3_to_node_1)</span><br><span class="line">graph.create(node_2_to_node_3)</span><br></pre></td></tr></table></figure>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/1692668510722-f9833f06-967c-46c2-b96a-691de7332604.png" alt="image"></p>
+<ol>
+<li>Path路径，基本语法：Path(*entities), 注意entities是实体(关系，节点都可以作为实体)</li>
+</ol>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/1692668994710-e1991773-6b57-4b22-8471-ff8e25e395e5.png" alt="image"></p>
+<ol>
+<li>Subgraph:子图是节点和关系的任意集合，它也是Node, Relationship和Path的基类， 基本语法：Subgraph(nodes, relationships)。 空子图表示为None, 使用bool()可以测试是否为空，参数要按数组输入，如下面代码：</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建子图，通过子图的方式更新数据库</span></span><br><span class="line">node_7 = Node(<span class="string">&#x27;英雄&#x27;</span>, name=<span class="string">&#x27;张翠山&#x27;</span>)</span><br><span class="line">node_8 = Node(<span class="string">&#x27;英雄&#x27;</span>, name=<span class="string">&#x27;殷素素&#x27;</span>)</span><br><span class="line">node_9 = Node(<span class="string">&#x27;英雄&#x27;</span>, name=<span class="string">&#x27;狮王&#x27;</span>)</span><br><span class="line"></span><br><span class="line">relationship7 = Relationship(node_1, <span class="string">&#x27;生父&#x27;</span>, node_7)</span><br><span class="line">relationship8 = Relationship(node_1, <span class="string">&#x27;生母&#x27;</span>, node_8)</span><br><span class="line">relationship9 = Relationship(node_1, <span class="string">&#x27;义父&#x27;</span>, node_9)</span><br><span class="line">subgraph_1 = Subgraph(nodes=[node_7, node_8, node_9],</span><br><span class="line">                      relationships=[relationship7, relationship8, relationship9])</span><br><span class="line">graph.create(subgraph_1)</span><br></pre></td></tr></table></figure>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/1692669527475-c9d0a0dc-9d4d-4ffd-98ed-a9afeb17a4b5.png" alt="image"></p>
+<p>工作流</p>
+<ol>
+<li>GraphService: 基于图服务的工作流</li>
+<li>Graph: 基于图数据库的工作流</li>
+<li>Transaction: 基于事务的工作流，一个Transaction分两个任务，增加一个新节点，将该节点与已有节点创建新关系。这两个任务有一个没完成，整个工作流就不会生效。通常，这种方式通过Graph.begin(readonly=False)构造函数构造，参数readonly表示只读</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建一个新事务</span></span><br><span class="line">transcation_1 = graph.begin()</span><br><span class="line"><span class="comment"># 创建一个新Node</span></span><br><span class="line">node_10 = Node(<span class="string">&#x27;武当&#x27;</span>, name=<span class="string">&#x27;张三丰&#x27;</span>)</span><br><span class="line">transcation_1.create(node_10)</span><br><span class="line"><span class="comment"># 创建两个关系: 张无忌-&gt;(师公)-&gt;张三丰 张翠山-&gt;(妻子)-&gt;殷素素</span></span><br><span class="line">relationship10 = Relationship(node_1, <span class="string">&#x27;师公&#x27;</span>, node_10)</span><br><span class="line">relationship11 = Relationship(node_7, <span class="string">&#x27;妻子&#x27;</span>, node_8)</span><br><span class="line">transcation_1.create(relationship10)</span><br><span class="line">transcation_1.create(relationship11)</span><br><span class="line">transcation_1.commit()</span><br></pre></td></tr></table></figure>
+<p>一个transaction增加的一个节点和两个关系</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/1692670406583-378901a5-73a1-4897-b269-2913bec75ad8.png" alt="image"></p>
+<p>删</p>
+<ol>
+<li>删除数据库中所有的节点和关系: graph.delete_all()</li>
+<li>其他删除方法如下(删除的基础是查询，但凡查询条件没错，就不会删错)</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 删除所有，</span></span><br><span class="line"><span class="comment"># graph.delete_all()</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 按照id删除，要删除节点前，首先需删除关系，否则会报错:ClientError</span></span><br><span class="line"><span class="comment"># graph.run(&#x27;math (r) where id(r) = 3 delete r&#x27;)</span></span><br><span class="line"><span class="comment"># 按照name属性删除，先增加一个独立的节点</span></span><br><span class="line">node_x = Node(<span class="string">&#x27;英雄&#x27;</span>, name=<span class="string">&#x27;韦一笑&#x27;</span>)</span><br><span class="line"><span class="comment"># graph.create(node_x)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># graph.run(&#x27;match (n:英雄&#123;name:\&#x27;韦一笑\&#x27;&#125;) delete n&#x27;)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除一个节点及与之相连的关系</span></span><br><span class="line"><span class="comment"># graph.run(&#x27;match (n:英雄&#123;name:\&#x27;韦一笑\&#x27;&#125;) detach delete n&#x27;)</span></span><br><span class="line"><span class="comment"># 删除某一类型的关系</span></span><br><span class="line">graph.run(<span class="string">&#x27;match ()-[r:喜欢]-&gt;() delete r;&#x27;</span>)</span><br><span class="line"><span class="comment"># 删除子图</span></span><br><span class="line"><span class="comment"># delete(subgraph_1)</span></span><br></pre></td></tr></table></figure>
+<p>改</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 改</span><br><span class="line"># 将狮王的武力值改为100</span><br><span class="line">node_9[&#x27;武力值&#x27;]=100</span><br><span class="line"># 本地修改完，要push到服务器上哦</span><br><span class="line">test_graph.push(node_9)</span><br></pre></td></tr></table></figure>
+<p>查询</p>
+<p>查询，按照路径、节点、关系等查询</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 为了方便查询更多内容，新增一些关系和节点</span></span><br><span class="line">transcation_2 = graph.begin()</span><br><span class="line">node_100 = Node(<span class="string">&#x27;巾帼&#x27;</span>, name=<span class="string">&#x27;赵敏&#x27;</span>)</span><br><span class="line">re_100 = Relationship(node_1, <span class="string">&#x27;Love&#x27;</span>, node_100)</span><br><span class="line"></span><br><span class="line">node_101 = Node(<span class="string">&#x27;巾帼&#x27;</span>, name=<span class="string">&#x27;周芷若&#x27;</span>)</span><br><span class="line">re_101 = Relationship(node_1, <span class="string">&#x27;knows&#x27;</span>, node_101)</span><br><span class="line">re_101_ = Relationship(node_101, <span class="string">&#x27;hate&#x27;</span>, node_100)</span><br><span class="line"></span><br><span class="line">node_102 = Node(<span class="string">&#x27;巾帼&#x27;</span>, name=<span class="string">&#x27;小昭&#x27;</span>)</span><br><span class="line">re_102 = Relationship(node_1, <span class="string">&#x27;knows&#x27;</span>, node_102)</span><br><span class="line"></span><br><span class="line">node_103 = Node(<span class="string">&#x27;巾帼&#x27;</span>, name=<span class="string">&#x27;蛛儿&#x27;</span>)</span><br><span class="line">re_103 = Relationship(node_103, <span class="string">&#x27;Love&#x27;</span>, node_1)</span><br><span class="line">transcation_2.create(node_100)</span><br><span class="line">transcation_2.create(re_100)</span><br><span class="line"></span><br><span class="line">transcation_2.create(node_101)</span><br><span class="line">transcation_2.create(re_101)</span><br><span class="line">transcation_2.create(re_101_)</span><br><span class="line"></span><br><span class="line">transcation_2.create(node_102)</span><br><span class="line">transcation_2.create(re_102)</span><br><span class="line"></span><br><span class="line">transcation_2.create(node_103)</span><br><span class="line">transcation_2.create(re_103)</span><br><span class="line">transcation_2.commit()</span><br></pre></td></tr></table></figure>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/1692672097202-eba07f27-1ef1-4c02-87ee-4c00d87b949d.png" alt="image"></p>
+<p>NodeMatcher: 定位满足特定条件的节点，基本语法：NodeMatcher(graph).match(<em>labels, *</em>properties)， </p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>first(）</td>
+<td>返回查询结果第一个Node, 没有则返回空</td>
+</tr>
+<tr>
+<td>where(conditino,properties)</td>
+<td>过滤查询结果</td>
+</tr>
+<tr>
+<td>order_by</td>
+<td>排序</td>
+</tr>
+</tbody>
+</table>
+</div>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"># 定义查询</span><br><span class="line">node_match = NodeMatcher(graph)</span><br><span class="line"># # 单个节点， 按照label和name查询</span><br><span class="line">node_single = node_match.match(&#x27;英雄&#x27;, name=&#x27;杨逍&#x27;).first()</span><br><span class="line">print(&quot;单节点查询:&quot;, node_single)</span><br><span class="line"></span><br><span class="line"># # 按label查询</span><br><span class="line"># node_hero = list(node_match.match(&#x27;英雄&#x27;).all())</span><br><span class="line"># print(&quot;查询结果类型&quot;, type(node_hero))</span><br><span class="line">node_hero = node_match.match(&#x27;英雄&#x27;).__iter__()</span><br><span class="line"></span><br><span class="line"># 循环取值</span><br><span class="line">i = 0</span><br><span class="line">for node in node_hero:</span><br><span class="line">    print(&quot;label查询第&#123;&#125;个为&#123;&#125;&quot;.format(i, node))</span><br><span class="line">    i += 1</span><br><span class="line"></span><br><span class="line"># 按照name查询</span><br><span class="line">node_name = node_match.match(name=&#x27;张无忌&#x27;)</span><br><span class="line">print(&quot;name查询结果&quot;, node_name)</span><br><span class="line"></span><br><span class="line"># 按照id查询</span><br><span class="line">node_id = node_match.get(1)</span><br><span class="line">print(&quot;id查询结果&quot;, node_id)</span><br></pre></td></tr></table></figure>
+<ol>
+<li>NodeMatch， 基本用法， NodeMatch(graph, labels=frozenset({}), predicates=(), order_by=(), skip=None, limit=None)可以看出，NodeMatcher与NodeMatch参数完全不同，后面可以加很多条件</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">node_match1 = NodeMatch(graph, labels=<span class="built_in">frozenset</span>(&#123;<span class="string">&#x27;英雄&#x27;</span>&#125;))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;=&#x27;</span>*<span class="number">15</span>,<span class="string">&#x27;遍历所有节点&#x27;</span>, <span class="string">&#x27;=&#x27;</span>*<span class="number">15</span>)</span><br><span class="line"><span class="keyword">for</span> node <span class="keyword">in</span> <span class="built_in">iter</span>(node_match1):</span><br><span class="line">    <span class="built_in">print</span>(node)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;=&#x27;</span>*<span class="number">15</span>,<span class="string">&#x27;查询结果计数&#x27;</span>, <span class="string">&#x27;=&#x27;</span>*<span class="number">15</span>)</span><br><span class="line"><span class="built_in">print</span>(node_match1.__len__())</span><br><span class="line"></span><br><span class="line"><span class="comment"># 按照武力值排序查询结果</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;=&#x27;</span>*<span class="number">15</span>,<span class="string">&#x27;按照武力值排序查询结果&#x27;</span>, <span class="string">&#x27;=&#x27;</span>*<span class="number">15</span>)</span><br><span class="line">wu = node_match1.order_by(<span class="string">&#x27;_.武力值&#x27;</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> wu:</span><br><span class="line">    <span class="built_in">print</span>(i)</span><br><span class="line">=============== 遍历所有节点 ===============</span><br><span class="line">(_3104:英雄 &#123;name: <span class="string">&#x27;\u6768\u9053&#x27;</span>, 武力值: <span class="string">&#x27;100&#x27;</span>&#125;)</span><br><span class="line">(_3257:英雄 &#123;name: <span class="string">&#x27;\u5f20\u65e0\u5fcc&#x27;</span>&#125;)</span><br><span class="line">(_4209:英雄 &#123;name: <span class="string">&#x27;\u5f20\u7fe0\u5c71&#x27;</span>&#125;)</span><br><span class="line">(_4210:英雄 &#123;name: <span class="string">&#x27;\u72ee\u738b&#x27;</span>, 武力值: <span class="number">10</span>&#125;)</span><br><span class="line">(_4211:英雄 &#123;name: <span class="string">&#x27;\u6bb7\u7d20\u7d20&#x27;</span>&#125;)</span><br><span class="line">=============== 查询结果计数 ===============</span><br><span class="line"><span class="number">5</span></span><br><span class="line">=============== 按照武力值排序查询结果 ===============</span><br><span class="line">(_3104:英雄 &#123;name: <span class="string">&#x27;\u6768\u9053&#x27;</span>, 武力值: <span class="string">&#x27;100&#x27;</span>&#125;)</span><br><span class="line">(_4210:英雄 &#123;name: <span class="string">&#x27;\u72ee\u738b&#x27;</span>, 武力值: <span class="number">10</span>&#125;)</span><br><span class="line">(_3257:英雄 &#123;name: <span class="string">&#x27;\u5f20\u65e0\u5fcc&#x27;</span>&#125;)</span><br><span class="line">(_4209:英雄 &#123;name: <span class="string">&#x27;\u5f20\u7fe0\u5c71&#x27;</span>&#125;)</span><br><span class="line">(_4211:英雄 &#123;name: <span class="string">&#x27;\u6bb7\u7d20\u7d20&#x27;</span>&#125;)</span><br></pre></td></tr></table></figure>
+<ol>
+<li>RelationshipMatcher:用于选择满足一组特定标准的关系的匹配器，基础语法，relation=RelationshipMatcher(graph)</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">relation = RelationshipMatcher(graph)</span><br><span class="line"><span class="comment"># Node表示any node</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;=&#x27;</span>*<span class="number">15</span>,<span class="string">&#x27;hate关系查询&#x27;</span>, <span class="string">&#x27;=&#x27;</span>*<span class="number">15</span>)</span><br><span class="line">x = relation.<span class="keyword">match</span>(nodes=<span class="literal">None</span>, r_type=<span class="string">&#x27;hate&#x27;</span>)</span><br><span class="line"><span class="keyword">for</span> x_ <span class="keyword">in</span> x:</span><br><span class="line">    <span class="built_in">print</span>(x_)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 增加两关系</span></span><br><span class="line">rel_1 = Relationship(node_101, <span class="string">&#x27;情敌&#x27;</span>, node_102)</span><br><span class="line">rel_2 = Relationship(node_102, <span class="string">&#x27;情敌&#x27;</span>, node_103)</span><br><span class="line">graph.create(rel_1)</span><br><span class="line">graph.create(rel_2)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 情敌查询结果</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;=&#x27;</span>*<span class="number">15</span>,<span class="string">&#x27;hate关系查询结果&#x27;</span>, <span class="string">&#x27;=&#x27;</span>*<span class="number">15</span>)</span><br><span class="line">x = relation.<span class="keyword">match</span>(nodes=<span class="literal">None</span>, r_type=<span class="string">&#x27;情敌&#x27;</span>)</span><br><span class="line"><span class="keyword">for</span> x_ <span class="keyword">in</span> x:</span><br><span class="line">    <span class="built_in">print</span>(x_)</span><br><span class="line">=============== hate关系查询 ===============</span><br><span class="line">(周芷若)-[:hate &#123;&#125;]-&gt;(赵敏)</span><br><span class="line">=============== hate关系查询结果 ===============</span><br><span class="line">(小昭)-[:情敌 &#123;&#125;]-&gt;(蛛儿)</span><br><span class="line">(周芷若)-[:情敌 &#123;&#125;]-&gt;(小昭)</span><br><span class="line"></span><br><span class="line">Process finished <span class="keyword">with</span> exit code <span class="number">0</span></span><br></pre></td></tr></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">Neng Peng</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://guudman.github.io/2023/09/11/neo4j%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/">https://guudman.github.io/2023/09/11/neo4j%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post_share"><div class="social-share" data-image="/img/cover/forest.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://fastly.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/10/11/scipy%E4%B8%AD%E5%B8%B8%E7%94%A8%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"><img class="prev-cover" src="/img/cover/cow.jpg" onerror="onerror=null;src='https://gitee.com/guudman/blog_images/raw/master/article.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">scipy中常用的数据结构</div></div></a></div><div class="next-post pull-right"><a href="/2023/09/09/%E5%85%B3%E4%BA%8E%E6%88%91/"><img class="next-cover" src="/img/cover/article.jpg" onerror="onerror=null;src='https://gitee.com/guudman/blog_images/raw/master/article.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">关于我</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-neo4j%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.</span> <span class="toc-text">1. neo4j数据类型</span></a></li></ol></div></div><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='https://gitee.com/guudman/blog_images/raw/master/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Neng Peng</div><div class="author-info__description">Not Only Look Once</div></div><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/GuudMan" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:2663017379@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>Announcement</span></div><div class="announcement_content">微信公众号: 预留，暂未开通</div></div></div></div></main><footer id="footer" style="background: #FFFFFF"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2023 By Neng Peng</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/chenxz21/hexo-theme-bcxm">Bcxm</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="Toggle Between Light And Dark Mode"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://fastly.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://fastly.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><script type="text/javascript" src="https://fastly.jsdelivr.net/npm/leancloud-storage@4.10.0/dist/av-min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://fastly.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><script id="click-heart" src="https://fastly.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
