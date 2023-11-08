@@ -1,3 +1,4 @@
+https://guudman.github.io/2023/11/08/SwinTransformer/
 https://guudman.github.io/2023/11/07/TransposeConv/
 https://guudman.github.io/2023/11/02/VggNet%E8%A7%A3%E6%9E%90/
 https://guudman.github.io/2023/11/05/VisionTransformer/
