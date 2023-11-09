@@ -6,7 +6,7 @@
   <link href="https://guudman.github.io/atom.xml" rel="self"/>
   
   <link href="https://guudman.github.io/"/>
-  <updated>2023-11-08T10:10:53.353Z</updated>
+  <updated>2023-11-09T11:33:32.588Z</updated>
   <id>https://guudman.github.io/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>DeepLab_V1</title>
+    <link href="https://guudman.github.io/2023/11/09/DeepLab-V1/"/>
+    <id>https://guudman.github.io/2023/11/09/DeepLab-V1/</id>
+    <published>2023-11-09T11:31:54.000Z</published>
+    <updated>2023-11-09T11:33:32.588Z</updated>
+    
+    <content type="html"><![CDATA[<meta name="referrer" content="no-referrer"><h3 id="1、简介"><a href="#1、简介" class="headerlink" title="1、简介"></a>1、简介</h3><p>论文原文： <a href="[1412.7062.pdf (arxiv.org">论文原文</a>](<a href="https://arxiv.org/pdf/1412.7062.pdf">https://arxiv.org/pdf/1412.7062.pdf</a>))</p><p>这篇文章最早发表于2014年， 是Google和UCLA等共同的杰作， 也是一篇很经典的论文。 DeepLab系列的第一篇论文， 因为已经过了很久，所以只是做简单的记录。 </p><p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231109161905683.png" alt="image-20231109161905683"></p><hr><h4 id="2、语义分割中存在的问题"><a href="#2、语义分割中存在的问题" class="headerlink" title="2、语义分割中存在的问题"></a>2、语义分割中存在的问题</h4><p>在论文的引言中首先抛出了两个问题（针对语义分割任务）：<strong>信号下采样导致分辨率降低和空间不敏感</strong>问题。 </p><p>对于第一个问题<strong>信号下采样</strong>， 作者说主要是采用Maxpooling导致的， 为了解决这个问题， 作者引入了’atrous’ (with holes) algorithm（空洞卷积/膨胀卷积/扩张卷积）</p><p>对于第二个问题<strong>空间不敏感</strong>, 作者说分类器自身的问题（分类器本身具备一定空间不变性）。为解决这个问题作者采用了fully-connected CRF(Conditional Random Field)方法， 这个方法只在DeepLabv1-v2中使用到了， 从V3之后即不去使用了， 而且这个方法很耗时。</p><hr><h4 id="DeepLabV1的优势"><a href="#DeepLabV1的优势" class="headerlink" title="DeepLabV1的优势"></a>DeepLabV1的优势</h4><p>相比于之前的一些网络， 本文提出的网络具有以下优势：</p><ol><li><p>速度更快， 论文说是采用了膨胀卷积的原因， 但fully-connected CRF很耗时。 </p></li><li><p>准确率更高， 相比之前最好的网络提升了7.2个点</p></li><li>模型更简单， 主要由DCNN和CRG联级构成</li></ol><hr><h4 id="网络构建细节"><a href="#网络构建细节" class="headerlink" title="网络构建细节"></a>网络构建细节</h4><p>LargeFOV</p><p>首先网络的backbone是当时比较火的VGG-16, 并且和FCN网络一样将全连接层的权重转成了卷积层的权重， 构成全卷积网络。关于膨胀卷积的使用， 论文中这么说的。</p><blockquote><p>We skip subsampling after the last two max-pooling layers in the network of Simnyan &amp; Zisserman（2014）and modify the convolitional filters in the layers that follow them by intorducing zeros to increase their length (2×in the last three convolutional layers and 4× in the first fully connected layer)</p></blockquote><p>根据代码绘制了如下的网络结构（DeepLab-LargeFOV)</p><p><img src="https://gitee.com/guudman/blog_images/raw/master/DeepLab-LargeFOV.jpg" alt="DeepLab-LargeFOV"></p><p>通过分析发现虽然backbone是VGG-16但所使用Maxpool略有不同， VGG论文中是kernel=2, stride=2, 但在DeepLabV1中是kernel=3, stride=2, padding=1。接着就是最后两个Maxpool层的stride全部设置成1了（这样才采样的倍率就从32变成了8）。最后三个3×3的卷积层采用了膨胀卷积，膨胀系数r=2。然后关于将全连接层卷积化过程中， 对于第一个全连接层（FC1)在FCN网络中是直接转换成卷积核大小7×7， 卷积核个数为4096的卷积层， 但在DeepLabv1中作者说是对参数进行了下采样最终得到的是卷积核大小3×3， 卷积核个数为1-24的卷积层，（这样不仅可以减少参数还可以减少计算量， 详情可以看论文的table2）， 对于第二个全连接层(FC2)卷积核个数也由4096采样成1024。</p><blockquote><p>After converting the network to a fully convolutional one, the first fully connected layer has 4096 filters of larget 7x7 spatial size and becomes the computianal bottleneck in our dense score map computation. We have addressed this practical problem by spatially subsampling (by simple decimation) the first FC layer to 4×4（or 3×3） spatial size.</p></blockquote><p>将FC1卷积化后， 还设置了膨胀系数， 论文3.1中说的是r=4但在Experimental Evaluation中Large of View章节里设置的是r=12对应LargeFOV。对于FC2卷积化后就是卷积核1x1， 卷积核个数为1024的卷积层， 接着再通过一个卷积核1x1, 卷积核个数为num_classes（包含背景）的卷积层， 最后通过8倍上采样还原成原图大小。 </p><p>下表是关于是否使用LargeFOV(Field of View)的对比。 </p><p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231109151723458.png" alt="image-20231109151723458"></p><p>第一行DeepLab-CRF-7x7就是直接将FC1按照FCN论文中的方法转换成7x7的卷积层，并且膨胀因子r=4(receptive field=224)</p><p>第二行DeepLab-CRF是将7×7下采样到4×4大小的卷积层， 同样膨胀因子r=4(receptive filed=128), 可以看到参数减半， 训练速度翻倍， 但是mean IOU下降了约4点。 </p><p>第三行DeepLab-CRF-4X4， 是在DeepLab-CRF的基础上膨胀因子r改成了8（receptive field=224）, mean IOU又提升了回去了 </p><p>第四行DeepLab-CRF-LargeFOV, 是将7x7下采样到3×3的卷积层， 膨胀因子r=12(receptive field=224), 相比DeepLab-CRF-7×7， 参数减少了6倍， 训练速度提升了3倍多， mean IOU不变。 </p><hr><p>MSc(Multi-Scale)</p><p>其实在论文中的4.3还提到了Multi-Scale Prediction, 即融合多个特征层的输出， 关于MSc(Multi-Scale)的结构论文中是这么说的</p><blockquote><p>Specifically, we attach to the input image and the output of each of the first four max pooling layers a two-alyer MLP (first layer:128 3×3 convolutional filters, second layer:128 1×1 convolutional filters) whose feature map is concatenated to the main network’s last layer feature map, The aggregate feature map fed into the softmax layer is thus enhanced by 5*128=640 channles</p></blockquote><p>即， 除了使用之前主分支上输出外， 还融合了来自原图尺度以及前4个Maxpool层的输出， 更详细的结构参考下图， 论文中说使用Msc大概能提升1.5个点， 使用fully-connected CRF大概能提升4个点。但是在源码中作者建议使用的是不带MSc的版本以及github上的一些开源实现都没有使用MSc, 可能得原因是MSc不仅费时而且很吃显存， 根据参考源码绘制了DeepLab-MSc-LargeFOV结构。 </p><p><img src="https://gitee.com/guudman/blog_images/raw/master/DeepLab1_MSc_FOV.jpg" alt="DeepLab1_MSc_FOV"></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;meta name=&quot;referrer&quot; content=&quot;no-referrer&quot;&gt;
+
+&lt;h3 id=&quot;1、简介&quot;&gt;&lt;a href=&quot;#1、简介&quot; class=&quot;headerlink&quot; title=&quot;1、简介&quot;&gt;&lt;/a&gt;1、简介&lt;/h3&gt;&lt;p&gt;论文原文： &lt;a href=&quot;[</summary>
+      
+    
+    
+    
+    
+    <category term="深度学习" scheme="https://guudman.github.io/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+    
+  </entry>
   
   <entry>
     <title>SwinTransformer</title>
