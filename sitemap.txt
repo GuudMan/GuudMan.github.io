@@ -1,3 +1,4 @@
+https://guudman.github.io/2023/11/09/DeepLab-V2/
 https://guudman.github.io/2023/11/09/DeepLab-V1/
 https://guudman.github.io/2023/11/08/SwinTransformer/
 https://guudman.github.io/2023/11/07/TransposeConv/
