@@ -51,7 +51,7 @@
   isHome: true,
   isHighlightShrink: false,
   isToc: false,
-  postUpdate: '2023-11-17 18:07:12'
+  postUpdate: '2023-11-17 18:09:17'
 }</script><noscript><style type="text/css">
   #nav {
     opacity: 1
@@ -142,7 +142,7 @@ Mask R-CNN不仅能够同时进行目标检测与分割， 还能很容易扩展
 
 Mask R-CNN的结构也很简单， 就是通过RoIAlign（在原Fast R-CNN中是RoIPool）得到RoI基础上并行添加一个Mask分支（小型的FCN), 见下图，之前Faster R-CNN是在RoI基础上接上一个Fast R-CNN检测头，即图中class, box分支， 现在又并行了一个Mask分支。
 
-注意带和不带FPN结构的Mask R-CNN在Mask分支上略有不同， 对于带有FPN结构的Mask R-CNN它的class， box分支和Mask分支并不是共用一个R ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2023/11/17/YoloV5/" title="YoloV5">YoloV5</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time class="post-meta-date-created" datetime="2023-11-17T09:46:42.000Z" title="Created 2023-11-17 17:46:42">2023-11-17</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2023-11-17T10:06:59.730Z" title="Updated 2023-11-17 18:06:59">2023-11-17</time></span></div><div class="content">
+注意带和不带FPN结构的Mask R-CNN在Mask分支上略有不同， 对于带有FPN结构的Mask R-CNN它的class， box分支和Mask分支并不是共用一个R ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2023/11/17/YoloV5/" title="YoloV5">YoloV5</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time class="post-meta-date-created" datetime="2023-11-17T09:46:42.000Z" title="Created 2023-11-17 17:46:42">2023-11-17</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2023-11-17T10:09:05.679Z" title="Updated 2023-11-17 18:09:05">2023-11-17</time></span></div><div class="content">
 
 简介YOLOv5项目的作者是Glenn Jocher并不是原Darknet项目的作者Joseph Redmon。并且这个项目至今都没有发表过正式的论文。YOLOV5仓库早在2020年5月就已创建， 如今已迭代多个版本。本文是针对V6.1版本展开的， 下表是V6.1版本中贴出的关于不同大小模型以及输入尺度对应的mAP、推理速度、参数数量以及理论计算的FLOPs。
 
