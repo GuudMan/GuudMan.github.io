@@ -1,0 +1,420 @@
+<!DOCTYPE html><html lang="zh-cn" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>YoloV5</title><meta name="keywords" content="深度学习"><meta name="author" content="AI4Future"><meta name="copyright" content="AI4Future"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="简介YOLOv5项目的作者是Glenn Jocher并不是原Darknet项目的作者Joseph Redmon。并且这个项目至今都没有发表过正式的论文。YOLOV5仓库早在2020年5月就已创建， 如今已迭代多个版本。本文是针对V6.1版本展开的， 下表是V6.1版本中贴出的关于不同大小模型以及输入尺度对应的mAP、推理速度、参数数量以及理论计算的FLOPs。     Model size m">
+<meta property="og:type" content="article">
+<meta property="og:title" content="YoloV5">
+<meta property="og:url" content="https://guudman.github.io/2023/11/17/YoloV5/index.html">
+<meta property="og:site_name" content="Ai4Future">
+<meta property="og:description" content="简介YOLOv5项目的作者是Glenn Jocher并不是原Darknet项目的作者Joseph Redmon。并且这个项目至今都没有发表过正式的论文。YOLOV5仓库早在2020年5月就已创建， 如今已迭代多个版本。本文是针对V6.1版本展开的， 下表是V6.1版本中贴出的关于不同大小模型以及输入尺度对应的mAP、推理速度、参数数量以及理论计算的FLOPs。     Model size m">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg">
+<meta property="article:published_time" content="2023-11-17T09:46:42.000Z">
+<meta property="article:modified_time" content="2023-11-17T09:51:09.982Z">
+<meta property="article:author" content="AI4Future">
+<meta property="article:tag" content="深度学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://guudman.github.io/2023/11/17/YoloV5/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":500},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"Author: AI4Future","link":"Link: ","source":"Source: Ai4Future","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source."}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://fastly.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://fastly.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'YoloV5',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-11-17 17:51:09'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="Ai4Future" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="onerror=null;src='https://gitee.com/guudman/blog_images/raw/master/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">AI4Future</div><div class="author-info__description">Not Only Look Once</div></div><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/GuudMan" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:2663017379@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-clock"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/gedan"><i class="fa-fw fas fa-music"></i><span> 歌单</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk"><i class="fa-fw fa fa-heartbeat"></i><span> 时光</span></a></div><div class="menus_item"><a class="site-page" href="/shuoba"><i class="fa-fw fas fa-comment-dots"></i><span> 说吧</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-tools"></i><span> 工具</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/google"><span> 镜像</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://json.xbyzs.cf"><span> Json格式化</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://draw.xbyzs.cf"><span> Draw画布</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://enkey.xbyzs.cf"><span> EnKey</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Ai4Future</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-clock"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/gedan"><i class="fa-fw fas fa-music"></i><span> 歌单</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk"><i class="fa-fw fa fa-heartbeat"></i><span> 时光</span></a></div><div class="menus_item"><a class="site-page" href="/shuoba"><i class="fa-fw fas fa-comment-dots"></i><span> 说吧</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-tools"></i><span> 工具</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/google"><span> 镜像</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://json.xbyzs.cf"><span> Json格式化</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://draw.xbyzs.cf"><span> Draw画布</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://enkey.xbyzs.cf"><span> EnKey</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">YoloV5</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2023-11-17T09:46:42.000Z" title="Created 2023-11-17 17:46:42">2023-11-17</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2023-11-17T09:51:09.982Z" title="Updated 2023-11-17 17:51:09">2023-11-17</time></span></div><div class="meta-secondline"></div></div></div><article class="post-content" id="article-container"><meta name="referrer" content="no-referrer">
+
+<h4 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h4><p>YOLOv5项目的作者是<code>Glenn Jocher</code>并不是原<code>Darknet</code>项目的作者<code>Joseph Redmon</code>。并且这个项目至今都没有发表过正式的论文。<a target="_blank" rel="noopener" href="https://github.com/ultralytics/yolov5">YOLOV5仓库</a>早在2020年5月就已创建， 如今已迭代多个版本。本文是针对V6.1版本展开的， 下表是V6.1版本中贴出的关于不同大小模型以及输入尺度对应的mAP、推理速度、参数数量以及理论计算的FLOPs。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Model</th>
+<th>size</th>
+<th style="text-align:center">mAPval</th>
+<th>mAPval</th>
+<th>Speed</th>
+<th>Speed</th>
+<th>Speed</th>
+<th>params</th>
+<th>FLOPs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"></td>
+<td>pixels</td>
+<td style="text-align:center">0.5:0.95</td>
+<td>0.5</td>
+<td>CPU b1(ms)</td>
+<td>V100 b1(ms)</td>
+<td>V100 b32(ms)</td>
+<td>(M)</td>
+<td>@640 (B)</td>
+</tr>
+<tr>
+<td style="text-align:center">YOLOv5n</td>
+<td>640</td>
+<td style="text-align:center">28</td>
+<td>45.7</td>
+<td>45</td>
+<td>6.3</td>
+<td>0.6</td>
+<td>1.9</td>
+<td>4.5</td>
+</tr>
+<tr>
+<td style="text-align:center">YOLOv5s</td>
+<td>640</td>
+<td style="text-align:center">37.4</td>
+<td>56.8</td>
+<td>98</td>
+<td>6.4</td>
+<td>0.9</td>
+<td>7.2</td>
+<td>16.5</td>
+</tr>
+<tr>
+<td style="text-align:center">YOLOv5m</td>
+<td>640</td>
+<td style="text-align:center">45.4</td>
+<td>64.1</td>
+<td>224</td>
+<td>8.2</td>
+<td>1.7</td>
+<td>21.2</td>
+<td>49</td>
+</tr>
+<tr>
+<td style="text-align:center">YOLOv5l</td>
+<td>640</td>
+<td style="text-align:center">49</td>
+<td>67.3</td>
+<td>430</td>
+<td>10.1</td>
+<td>2.7</td>
+<td>46.5</td>
+<td>109.1</td>
+</tr>
+<tr>
+<td style="text-align:center">YOLOv5x</td>
+<td>640</td>
+<td style="text-align:center">50.7</td>
+<td>68.9</td>
+<td>766</td>
+<td>12.1</td>
+<td>4.8</td>
+<td>86.7</td>
+<td>205.7</td>
+</tr>
+<tr>
+<td style="text-align:center">YOLOv5n6</td>
+<td>1280</td>
+<td style="text-align:center">36</td>
+<td>54.4</td>
+<td>153</td>
+<td>8.1</td>
+<td>2.1</td>
+<td>3.2</td>
+<td>4.6</td>
+</tr>
+<tr>
+<td style="text-align:center">YOLOv5s6</td>
+<td>1280</td>
+<td style="text-align:center">44.8</td>
+<td>63.7</td>
+<td>385</td>
+<td>8.2</td>
+<td>3.6</td>
+<td>12.6</td>
+<td>16.8</td>
+</tr>
+<tr>
+<td style="text-align:center">YOLOv5m6</td>
+<td>1280</td>
+<td style="text-align:center">51.3</td>
+<td>69.3</td>
+<td>887</td>
+<td>11.1</td>
+<td>6.8</td>
+<td>35.7</td>
+<td>50</td>
+</tr>
+<tr>
+<td style="text-align:center">YOLOv5l6</td>
+<td>1280</td>
+<td style="text-align:center">53.7</td>
+<td>71.3</td>
+<td>1784</td>
+<td>15.8</td>
+<td>10.5</td>
+<td>76.8</td>
+<td>111.4</td>
+</tr>
+<tr>
+<td style="text-align:center">YOLOv5x6</td>
+<td>1280</td>
+<td style="text-align:center">55</td>
+<td>72.7</td>
+<td>3136</td>
+<td>26.2</td>
+<td>19.4</td>
+<td>140.7</td>
+<td>209.8</td>
+</tr>
+<tr>
+<td style="text-align:center">+TTA</td>
+<td>1536</td>
+<td style="text-align:center">55.8</td>
+<td>72.7</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="网络结构"><a href="#网络结构" class="headerlink" title="网络结构"></a>网络结构</h4><p>网络结构由以下几个部分组成</p>
+<p>Backbone: New CSP-Darknet53</p>
+<p>Neck: SPPF, New CSP-PAN</p>
+<p>Head； YOLOv3 Head</p>
+<p>下面是根据yolov5l.yaml绘制的网络整体结构， YOLOv5针对不同大小（n, s, m, l, x）的网络整体架构都一样， 只不过在每个子模块中采用不同的深度和宽度， 分别对应yaml文件中的depth_multiple和width_multiple参数。另外， 官方出了n, s, m, l, x版本外还有n6, s6, l6, x6，区别在于后者是针对更大分辨率的图片比如1280x1280， 当然结构上也有些差异， 后者会下采样64倍， 采用4个预测特征层， 而前者只会下采样到32倍且采用3个预测特征层。本文只讨论前者，下图为yolov5l。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/yolov5.jpg" alt="yolov5"></p>
+<p>对于YOLOV4， 其实YOLOV5在<strong>Backbone</strong>部分无太大变化。但YOLOV5在v6.0版本相比之前版本有一个很小的改动， 把网络的第一层（原来是Focus模块）换成了一个6×6大小的卷积层。<strong>二者在理论上是等价的</strong>，但对于现有的一些GPU设备（以及相应的优化算法）使用6×6大小的卷积才能够比使用Focus模块更加高效。</p>
+<p>下图是原来的Focus模块（和之前的Swin Transformer中的Patch Merging类似）， 将每个2×2的相邻像素划分为一个patch， 然后将每个patch中相同位置（同一颜色）像素拼接在一起就得到了4个feature map， 然后再接上一个3×3大小的卷积层。这和直接使用一个6×6大小的卷积层等效。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/yolov5_focus.jpg" alt="yolov5_focus"></p>
+<p>在Neck部分的变化还是相比较大， 首先是将SPP换成了SPPF（Glenn Jocher自己设计的）， 二者的作用一样， 但是后者的效率更高。SPP结构如下图所示， 是将输入并行通过多个大小不同的Maxpool， 然后做进一步融合， 能够在一定程度上解决目标多尺度问题。 </p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/yolov5_spp.jpg" alt="yolov5_spp"></p>
+<p>而SPPF结构是将输入串行通过多个5×5大小的MaxPool层， 这里需要注意的是串行两个5x5大小的MaxPool层是和一个9x9大小的MaxPoll层计算结果是一样的， 串行三个5x5大小的MaxPool层是和一个13x13大小的MaxPoll层计算结果是一样的</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/SPPF.jpg" alt="SPPF"></p>
+<h4 id="数据增强"><a href="#数据增强" class="headerlink" title="数据增强"></a>数据增强</h4><p>YOLOv5中使用了多种数据增强</p>
+<p><strong>Mosaic</strong>，将四张图片拼成一张图片</p>
+<p><strong>Copy paste</strong>，将部分目标随机的粘贴到图片中，前提是数据要有<code>segments</code>数据才行，即每个目标的实例分割信息。</p>
+<p><strong>Random affine(Rotation, Scale, Translation and Shear)</strong>，随机进行仿射变换，但根据配置文件里的超参数发现只使用了<code>Scale</code>和<code>Translation</code>即缩放和平移。</p>
+<p><strong>MixUp</strong>，就是将两张图片按照一定的透明度融合在一起，具体有没有用不太清楚，毕竟没有论文，也没有消融实验。代码中只有较大的模型才使用到了<code>MixUp</code>，而且每次只有10%的概率会使用到。</p>
+<p><strong>Albumentations</strong>，主要是做些滤波、直方图均衡化以及改变图片质量等等，我看代码里写的只有安装了<code>albumentations</code>包才会启用，但在项目的<code>requirements.txt</code>文件中<code>albumentations</code>包是被注释掉了的，所以默认不启用。</p>
+<p><strong>Augment HSV(Hue, Saturation, Value)</strong>，随机调整色度，饱和度以及明度。</p>
+<h4 id="训练策略"><a href="#训练策略" class="headerlink" title="训练策略"></a>训练策略</h4><p>yolov5中使用了多种训练策略， 这里简单总结几点</p>
+<p><strong>Multi-scale training(0.5~1.5x)，</strong>多尺度训练，假设设置输入图片的大小为640 × 640 ，训练时采用尺寸是在0.5 × 640 ∼ 1.5 × 640 之间随机取值，注意取值时取得都是32的整数倍（因为网络会最大下采样32倍）。</p>
+<p><strong>AutoAnchor(For training custom data)</strong>，训练自己数据集时可以根据自己数据集里的目标进行重新聚类生成Anchors模板。</p>
+<p><strong>Warmup and Cosine LR scheduler</strong>，训练前先进行<code>Warmup</code>热身，然后在采用<code>Cosine</code>学习率下降策略</p>
+<p><strong>EMA(Exponential Moving Average)</strong>，可以理解为给训练的参数加了一个动量，让它更新过程更加平滑</p>
+<p><strong>Mixed precision</strong>，混合精度训练，能够减少显存的占用并且加快训练速度，前提是GPU硬件支持。</p>
+<p><strong>Evolve hyper-parameters</strong>，超参数优化，没有炼丹经验的人勿碰，保持默认就好。</p>
+<h4 id="损失计算"><a href="#损失计算" class="headerlink" title="损失计算"></a>损失计算</h4><p>YOLOv5的损失主要是三部分组成。</p>
+<p>Classes loss, 分类损失， 采用的是BCE loss， 注意只计算正样本的分类损失</p>
+<p>Objectness loss, obj损失， 采用的是BCE loss， 这里的obj表示网络预测的目标边界框与GT Box的CIoU， 这里计算的是所有样本的obj损失</p>
+<p>Location loss: 定位损失， 采用的是CIoU loss, 注意只计算正样本的定位损失</p>
+<script type="math/tex; mode=display">
+Loss = \lambda_1L_{cls} + \lambda_2L_{obj} + \lambda_3L_{loc}</script><p>其中lambda为平衡系数</p>
+<h4 id="平衡不同尺度的损失"><a href="#平衡不同尺度的损失" class="headerlink" title="平衡不同尺度的损失"></a>平衡不同尺度的损失</h4><p>这里是指三个预测特征层（P3,P4,P5)上的obj损失采用不同的权重， 针对预测小目标的预测特征层（P3)采用的权重是4.0， 针对中等目标的预测特征层（P4）采用的权重是1.0, 针对预测大目标的预测特征层（P5）采用的权重是0.4， 这里说的是针对COCO数据集设置的超参数。</p>
+<script type="math/tex; mode=display">
+L_{obj} = 4.0 \cdot L_{obj}^{medium} + 0.4 \cdot L^{large}_{obj}</script><h4 id><a href="#" class="headerlink" title=" "></a> </h4><h4 id="消除Grid敏感度"><a href="#消除Grid敏感度" class="headerlink" title="消除Grid敏感度"></a>消除Grid敏感度</h4><p>主要是调整目标中心点相对Grid网络的左上角偏移量，下图是YOLOv2， v3的计算公式。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231117020720005.png" alt="image-20231117020720005"></p>
+<p>其中</p>
+<p>t_x是网络预测的目标中心x坐标偏移量（相对于网格的左上角）</p>
+<p>t_y是网络预测的目标中心y坐标偏移量（相对于网格的左上角）</p>
+<p>c_x是对应网格左上角的x坐标</p>
+<p>c_y是对应网络左上角的y坐标</p>
+<script type="math/tex; mode=display">\sigma$$是Sigmoid激活函数， 将预测的偏移量限制到0和1之间， 即预测的中心点不会超出对应的Grid Cell区域。
+
+关于预测目标中心点相对Grid网格左上角（c_x, c_y）偏移量为σ(t_x)， σ(t_y)， yolov4作者认为这样不是很合理， 比如当真实目标中心带你非常靠近网格的左上角点【意味着σ(t_x)， σ(t_y)趋近于0】或者右下角点【意味着σ(t_x)， σ(t_y)趋近于1】时， 网络预测值需要负无穷或者正无穷时才能取到，而这种极端的值网络一般无法达到。为解决这个问题， 作者对偏移量进行了缩放，从原来的（0， 1）缩放到（-0.5， 1.5）, 这样网络预测的偏移量就能方便达到0或者1， 因此最终预测的目标中心点b_x, b_y的计算公式为：</script><p>b_x = (2 \cdot \sigma(t_x) - 0.5) + c_x</p>
+<script type="math/tex; mode=display">
+</script><p>b_y = (2 \cdot \sigma(t_y) - 0.5) + c_y</p>
+<script type="math/tex; mode=display">
+
+在YOLOv5中除了调整预测Anchor相对Grid网格左上角（c_x, c_y)偏移量外， 还调整了预测目标高宽的计算公式， 之前是：</script><p>b_w = p_w \cdot e^{tw}</p>
+<script type="math/tex; mode=display">
+</script><p>b_h = p_h \cdot e^{th}</p>
+<script type="math/tex; mode=display">
+
+在YOLOv5调整为：</script><p>b_w = p_w \cdot (2 \cdot \sigma(t_w)) ^ 2</p>
+<script type="math/tex; mode=display">
+</script><p>b_h = p_h \cdot (2 \cdot \sigma(t_h)) ^ 2</p>
+<script type="math/tex; mode=display">
+
+
+
+原来的计算公式并没有对预测目标宽高做限制，这样可能出现梯度爆炸，训练不稳定等问题。
+
+#### 匹配正样本（Buidl Targets)
+
+yolov5与yolov4类似， 主要区别在于GT Box与Anchor Templates模板的匹配方式，在yolov4中直接将每个GT Box与对应的Anchor Template模板计算IoU， 只要IoU大于设定的阈值就算匹配成功， 但在YOLOv5中， 作者先去计算每个GT Box与对应的Anchor Template目标的高宽比例， 即</script><p>r_w = w_{gt} / w_{at}</p>
+<script type="math/tex; mode=display">
+</script><p>r_h = h_{gt} / h_{at}</p>
+<script type="math/tex; mode=display">
+
+然后统计这些比例和它们倒数之间的最大值， 这里可以理解成计算GT Box和Anchor Templates分别在宽高一级高度方向的最大差异（当相等的时候比例为1， 差异最小）</script><p>r^{max}_{w} = max(r_w, 1/r_w)</p>
+<script type="math/tex; mode=display">
+</script><p>r^{max}_{h} = max(r_h, 1/r_h)</p>
+<script type="math/tex; mode=display">
+
+接着统计$$r^{max}_w, r^{max}_h$$之间的最大值， 即宽度和高度方向差异最大的值：</script><p>r^{max} = max(r^{max}_w, r^{max}_h)</p>
+<p>$$<br>如果GT Box和对应的Anchor Template的r^{max}小于阈值anchor_t（在源码中默认设置为4.0）， 即GT Box和对应的Anchor Template的高，宽比例相差不算太大，则将GT Box分配给该Anchor Template模板。为方便理解，做图如下。假设对某个GT Box而言， 其实只要GT Box满足在某个Anchor Template高和宽的x0.25和x4.0倍之间就算匹配成功。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231117024711216.png" alt="image-20231117024711216"></p>
+<p>剩下的步骤和YOLOv4中的一致</p>
+<p>将GT投影到对应预测特征层上， 根据GT的中心点定位到对应的cell， 注意图中有三个对应的cell， 因为网络预测中心点的偏移范围已经调整到了（-0.5， 1.5），所以按理说只要Grid Cell左上角点距离GT中心点在（-0.5， 1.5）范围内它们对应的Anchor都能回归到GT的位置处，这样就能让正样本的数量得到大量的扩充。 </p>
+<p>则这个三个Cell对应的AT2和AT3都为正样本。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231117030514848.png" alt="image-20231117030514848"></p>
+<p>还需要注意的是， yolov5源码中扩展Cell时只会往上、下、左、右四个方向扩展， 不会往左上、右下、左下、右下方向扩展。下面又给出了一些根据<script type="math/tex">GT_X^{center}, GT_y^{center}</script>的位置扩展的一些cell案例，其中%1表示会取余并保留一位小数。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231117030859200.png" alt="image-20231117030859200"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">AI4Future</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://guudman.github.io/2023/11/17/YoloV5/">https://guudman.github.io/2023/11/17/YoloV5/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post_share"><div class="social-share" data-image="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://fastly.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2023/11/14/Yolov4/"><img class="next-cover" src="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg" onerror="onerror=null;src='https://gitee.com/guudman/blog_images/raw/master/article.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">Yolov4</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2023/11/02/AlexNet%E8%A7%A3%E6%9E%90/" title="AlexNet解析"><img class="cover" src="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-11-02</div><div class="title">AlexNet解析</div></div></a></div><div><a href="/2023/11/04/BatchNormalization/" title="BatchNormalization"><img class="cover" src="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-11-04</div><div class="title">BatchNormalization</div></div></a></div><div><a href="/2023/11/12/ConvNeXt/" title="ConvNeXt"><img class="cover" src="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-11-12</div><div class="title">ConvNeXt</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84"><span class="toc-number">2.</span> <span class="toc-text">网络结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA"><span class="toc-number">3.</span> <span class="toc-text">数据增强</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E7%AD%96%E7%95%A5"><span class="toc-number">4.</span> <span class="toc-text">训练策略</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8D%9F%E5%A4%B1%E8%AE%A1%E7%AE%97"><span class="toc-number">5.</span> <span class="toc-text">损失计算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B9%B3%E8%A1%A1%E4%B8%8D%E5%90%8C%E5%B0%BA%E5%BA%A6%E7%9A%84%E6%8D%9F%E5%A4%B1"><span class="toc-number">6.</span> <span class="toc-text">平衡不同尺度的损失</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">7.</span> <span class="toc-text"> </span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B6%88%E9%99%A4Grid%E6%95%8F%E6%84%9F%E5%BA%A6"><span class="toc-number">8.</span> <span class="toc-text">消除Grid敏感度</span></a></li></ol></div></div><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='https://gitee.com/guudman/blog_images/raw/master/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">AI4Future</div><div class="author-info__description">Not Only Look Once</div></div><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/GuudMan" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:2663017379@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>Announcement</span></div><div class="announcement_content">微信公众号: 预留，暂未开通</div></div></div></div></main><footer id="footer" style="background: #FFFFFF"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2023 By AI4Future</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/chenxz21/hexo-theme-bcxm">Bcxm</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="Toggle Between Light And Dark Mode"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://fastly.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://fastly.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><script type="text/javascript" src="https://fastly.jsdelivr.net/npm/leancloud-storage@4.10.0/dist/av-min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://fastly.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><script id="click-heart" src="https://fastly.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script async>window.onload=function(){var a=document.createElement('script'),b=document.getElementsByTagName('script')[0];a.type='text/javascript',a.async=!0,a.src='/sw-register.js?v='+Date.now(),b.parentNode.insertBefore(a,b)};</script></body></html>
