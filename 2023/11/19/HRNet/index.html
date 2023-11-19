@@ -1,0 +1,230 @@
+<!DOCTYPE html><html lang="zh-cn" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>HRNet</title><meta name="keywords" content="深度学习"><meta name="author" content="AI4Future"><meta name="copyright" content="AI4Future"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="简介论文原文： 论文原文) HRNet是由中国科学技术大学和亚洲微软研究院在2019年共同发表的， 这篇文章中的HRNet（High-Resolution Net）是针对2D人体姿态估计任务提出的， 并且该网络主要针对单一人体姿态估计。人体姿态估计主要应用在人体行为识别、人机交互、动画制作等。  主要由两种深度学习方法处理Human Pose Estimation任务。 1、基于regress">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HRNet">
+<meta property="og:url" content="https://guudman.github.io/2023/11/19/HRNet/index.html">
+<meta property="og:site_name" content="Ai4Future">
+<meta property="og:description" content="简介论文原文： 论文原文) HRNet是由中国科学技术大学和亚洲微软研究院在2019年共同发表的， 这篇文章中的HRNet（High-Resolution Net）是针对2D人体姿态估计任务提出的， 并且该网络主要针对单一人体姿态估计。人体姿态估计主要应用在人体行为识别、人机交互、动画制作等。  主要由两种深度学习方法处理Human Pose Estimation任务。 1、基于regress">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg">
+<meta property="article:published_time" content="2023-11-19T06:41:20.000Z">
+<meta property="article:modified_time" content="2023-11-19T06:44:54.516Z">
+<meta property="article:author" content="AI4Future">
+<meta property="article:tag" content="深度学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://guudman.github.io/2023/11/19/HRNet/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":500},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"Author: AI4Future","link":"Link: ","source":"Source: Ai4Future","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source."}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://fastly.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://fastly.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'HRNet',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-11-19 14:44:54'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="Ai4Future" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="onerror=null;src='https://gitee.com/guudman/blog_images/raw/master/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">AI4Future</div><div class="author-info__description">Not Only Look Once</div></div><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/GuudMan" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:2663017379@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-clock"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/gedan"><i class="fa-fw fas fa-music"></i><span> 歌单</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk"><i class="fa-fw fa fa-heartbeat"></i><span> 时光</span></a></div><div class="menus_item"><a class="site-page" href="/shuoba"><i class="fa-fw fas fa-comment-dots"></i><span> 说吧</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-tools"></i><span> 工具</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/google"><span> 镜像</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://json.xbyzs.cf"><span> Json格式化</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://draw.xbyzs.cf"><span> Draw画布</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://enkey.xbyzs.cf"><span> EnKey</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Ai4Future</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-clock"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/gedan"><i class="fa-fw fas fa-music"></i><span> 歌单</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk"><i class="fa-fw fa fa-heartbeat"></i><span> 时光</span></a></div><div class="menus_item"><a class="site-page" href="/shuoba"><i class="fa-fw fas fa-comment-dots"></i><span> 说吧</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-tools"></i><span> 工具</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/google"><span> 镜像</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://json.xbyzs.cf"><span> Json格式化</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://draw.xbyzs.cf"><span> Draw画布</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://enkey.xbyzs.cf"><span> EnKey</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">HRNet</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2023-11-19T06:41:20.000Z" title="Created 2023-11-19 14:41:20">2023-11-19</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2023-11-19T06:44:54.516Z" title="Updated 2023-11-19 14:44:54">2023-11-19</time></span></div><div class="meta-secondline"></div></div></div><article class="post-content" id="article-container"><meta name="referrer" content="no-referrer">
+
+<h4 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h4><p>论文原文： <a href="[arxiv.org/pdf/1902.09212.pdf](https://arxiv.org/pdf/1902.09212.pdf">论文原文</a>)</p>
+<p>HRNet是由中国科学技术大学和亚洲微软研究院在2019年共同发表的， 这篇文章中的HRNet（High-Resolution Net）是针对2D人体姿态估计任务提出的， 并且该网络主要针对单一人体姿态估计。人体姿态估计主要应用在人体行为识别、人机交互、动画制作等。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231119093443759.png" alt="image-20231119093443759"></p>
+<p>主要由两种深度学习方法处理Human Pose Estimation任务。</p>
+<p>1、基于regression的方式， 即直接预测每个关键点的位置坐标</p>
+<p>2、基于heatmap的方式， 即针对每个关键点预测一张热度图（预测出现在每个位置上的分数）</p>
+<hr>
+<h4 id="HRNet"><a href="#HRNet" class="headerlink" title="HRNet"></a>HRNet</h4><p>下图是根据源码绘制的HRNet-w32的模型结构简图， 文章中还提到了HENet-w48版本， 二者的区别在于每个模块所采用的通道个数不同， 网路的整体结构都一样， 而该论文的核心思想就是不断地去融合不同尺度上的信息， 也就是论文中说的Exchange Blocks。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/HRNet_1.jpg" alt="HRNet_1"></p>
+<p>从上图可以看出，HRNet首先通过两个卷积核大小为3x3步距为2的卷积层（后面接着BN以及ReLU）共下采样了4倍， 然后通过Layer1模块， 这里的Layer1其实和之前的ResNet中的Layer1类似， 就是重复堆叠Bottleneck， 注意这里的Layer1只会调整通道个数， 并不会改变特征层大小。</p>
+<p>然后是一系列Transition以及stage结构， 每通过一个transition结构都会新增一个尺度分支， 比如transition1， 它在layer1的输出基础上通过并行两个卷积核为3x3的卷积层得到两个不同尺度分支， 即下采样4倍的尺度以及下采样8倍的尺度。在Transition2中在原来的两个尺度分支基础上再新增加一个下采样16倍的尺度。</p>
+<p>下面介绍stage结构， 为方便理解， 以stage3为例， 对于每个尺度分支， 首先通过4个Basic Block，这个就是ResNet中的Basic Block， 然后融合不同尺度上的信息。对于每个尺度分支上的输出都是由所有分支上的输出进行融合得到的。比如对于下采样4倍分支的输出， 它是分别将下采样4倍分支的输出（不做任何处理）、下采样8倍分支的输出通过Up x2上采样2倍以及下采样16倍分支的输出通道通过Up x4上采样4倍进行相加最后通过ReLU得到下采样4倍分支的融合输出，其他分支也类似。xn表示该模块（Basic Block和Exchange Block）重复堆叠n次。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231119111457818.png" alt="image-20231119111457818"></p>
+<p>下面看一下Up和Down是如何实现的，对于所有的Up模块通过一个卷积核大小为1x1的卷积层后通过BN层最后通过Upsample直接放大n倍得到上采样后的结果（这里的上采样默认采用的是nearest最邻近插值）。Down模块相比于Up模块稍微麻烦一点， 每下采样2倍都要增加一个卷积核大小为3x3步距为2的卷积层（注意下图中Conv和Conv2d的区别， Conv2d是普通的卷积层， 而Conv包含了卷积， BN以及ReLU激活函数）。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231119111915278.png" alt="image-20231119111915278"></p>
+<p>最后需要注意的是Stage4中的最后一个Exchange Block只输出下采样4倍分支的输出（即只保留分辨率最高的特征层）， 然后接上一个卷积核大小为1x1卷积核个数为17（因为coco数据集中每个人标注了17个关键点）的卷积层，最终得到的特征层（64x48x17)就是针对每个关键点的heatmap（热力图）。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231119112307305.png" alt="image-20231119112307305"></p>
+<hr>
+<h4 id="预测结果（heatmap）可视化"><a href="#预测结果（heatmap）可视化" class="headerlink" title="预测结果（heatmap）可视化"></a>预测结果（heatmap）可视化</h4><p>关于预测得到的heatmap听起来比较抽象，假设输入网络预测图片的大小为256x192。为保证原图像比例， 在两侧进行padding。右侧是从预测结果也及时heatmap（64x48x17）中提取出的部分关键点对应的预测信息（64x17x1）。上面提到过， 网络最终输出的heatmap的分辨率是原图的1/4，所以高宽分别是64和48，接着对每个关键点的预测信息求最大值的位置， 即预测score最大的位置，作为预测关键点的位置，映射回原图就能得到原图上关键点的坐标。</p>
+<p>在原论文中， 对于每个关键点并不是直接取score最大的位置（直接取score最大的位置其实也没有多大的影响）。假设对于某一关键点heatmap如下图所示， 根据寻找最大score可以找到坐标（3， 3），接着对比该点两侧（x方向）， 上下两侧（y方向）的score。比如先看左右两侧， 明显右侧的score比左侧大（颜色越深，score越大）， 所以最终预测的x坐标偏移了0.25， 同理上下两侧也是一样的。所以x， y的预测分别为3.25和2.75。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231119114105735.png" alt="image-20231119114105735"></p>
+<p>coco数据集中标注的17个关键点的顺序如下：</p>
+<blockquote>
+<p>“kps”: [“nose”,”left_eye”,”right_eye”,”left_ear”,”right_ear”,”left_shoulder”,”right_shoulder”,”left_elbow”,”right_elbow”,”left_wrist”,”right_wrist”,”left_hip”,”right_hip”,”left_knee”,”right_knee”,”left_ankle”,”right_ankle”]</p>
+</blockquote>
+<hr>
+<h4 id="损失的计算"><a href="#损失的计算" class="headerlink" title="损失的计算"></a>损失的计算</h4><p>论文中说采用的是均方误差Mean Squared Error.</p>
+<p>网络预测的最终结果是针对每个关键点的heatmap， 那么训练对应的GT又是什么呢， 根据标注信息我们知道每个关键点的坐标的（原图尺度）， 接着将坐标除以4（缩放到heatmap尺度）再进行四舍五入。针对每个关键点， 先生成一张全值为0的heatmap， 然后对应关键点坐标处填充1就得到下面左侧的图片。如果直接拿左侧的heatmap作为GT去训练网络的话， 会发现网络很难收敛（可以理解为针对每个关键点只有一个正样本， 其他64x48-1个都是负样本， 正负样本及其不均匀）， 为了解决这个问题一般都会以关键点坐标为中心应用一个2D的高斯分布（没有做标准化处理）得到右图所示的GT（数字是随便填充的）， 利用这个GT heatmap配合网络预测的heatmap就能计算MSE损失了。 </p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231119115634460.png" alt="image-20231119115634460"></p>
+<p>最后计算损失的时候， 并非将所有关键点的损失进行相加， 而是每个点的损失分别乘以不同的权重。下面是不同点以及对应的权重。</p>
+<blockquote>
+<p>“kps”: [“nose”,”left_eye”,”right_eye”,”left_ear”,”right_ear”,”left_shoulder”,”right_shoulder”,”left_elbow”,”right_elbow”,”left_wrist”,”right_wrist”,”left_hip”,”right_hip”,”left_knee”,”right_knee”,”left_ankle”,”right_ankle”]</p>
+<p>“kps_weights”: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.2, 1.2, 1.5, 1.5, 1.0, 1.0, 1.2, 1.2, 1.5, 1.5] </p>
+</blockquote>
+<hr>
+<h4 id="评价准则"><a href="#评价准则" class="headerlink" title="评价准则"></a>评价准则</h4><p>在目标检测中可以通过IoU作为预测bbox和真实bbox之间的重合程度或相似程度。在关键点检测任务中一般采用OKS(object keypoint similarity)来表示预测keypoint与真实keypoints的相似程度， 其值域在0到1之间，越靠近1越相似。</p>
+<script type="math/tex; mode=display">
+OKS=\frac{\sum_{i}[e^{-dIi^2/2s^2k_i^2} \cdot \delta(v_i > 0)]}{\sum_{i}[\delta(v_i > 0)]}</script><p>其中， i表示第i个关键点</p>
+<p>vi表示第i个关键点的可见性，这里的vi是GT提供的， vi=0表示该点在图像外无法标注，vi=1表示虽然该点不可见但大概能猜出位置。vi=2表示该点可见。</p>
+<p>δ(x), 当x为true时值为1， x为false时， 值为0， 通过上面的公式， OKS只计算GT中标出的点， 即vi&gt;0的所有关键点。</p>
+<p>di表示第i个关键点与对应GT之间的欧氏距离。</p>
+<p>s为目标面积的平方根， 原话是：scale s which we define as the square root of the object segment area. 这里的面积应该是分割面积， 该数据在COCO数据集标注信息中都是有提供的。</p>
+<p>ki是用来控制关键点类别i的衰减常数。这个常数是在5000张验证集上统计得到的。</p>
+<hr>
+<h4 id="数据增强"><a href="#数据增强" class="headerlink" title="数据增强"></a>数据增强</h4><p>论文中采用的数据增强有：随机旋转（-45°到45°之间）， 随机缩放（0.65到1.35之间）。随机水平翻转以及half body（有一定概率会对目标进行裁剪， 只保留半身关键点，上半身或者下半身）。</p>
+<p>注意输入图片的比例。假设原始输入图片大小固定尺寸为256x192（height：width=4:3）， 但预测的人体目标的高宽比不是4:3， 此时千万不要简单粗暴的拉伸到256x192。正确的方法是保存目标原比例缩放到对应尺度然后再做padding， （由于高宽比&gt;4:3, 所以保持原比例将高缩放到256， 然后在图片width两侧padding得到256x192）。如果拥有原始图像的上下文信息的话可以直接在原图中固定height， 然后再调整width保证高：宽 = 4:3， 再重新裁剪目标并缩放到256x192。这样预测的结果才是准确的。如果直接简单粗暴的拉伸准确率会明显下降。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">AI4Future</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://guudman.github.io/2023/11/19/HRNet/">https://guudman.github.io/2023/11/19/HRNet/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post_share"><div class="social-share" data-image="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://fastly.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2023/11/17/Mask-R-CNN/"><img class="next-cover" src="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg" onerror="onerror=null;src='https://gitee.com/guudman/blog_images/raw/master/article.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">Mask_R-CNN</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2023/11/02/AlexNet%E8%A7%A3%E6%9E%90/" title="AlexNet解析"><img class="cover" src="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-11-02</div><div class="title">AlexNet解析</div></div></a></div><div><a href="/2023/11/04/BatchNormalization/" title="BatchNormalization"><img class="cover" src="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-11-04</div><div class="title">BatchNormalization</div></div></a></div><div><a href="/2023/11/12/ConvNeXt/" title="ConvNeXt"><img class="cover" src="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-11-12</div><div class="title">ConvNeXt</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#HRNet"><span class="toc-number">2.</span> <span class="toc-text">HRNet</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%84%E6%B5%8B%E7%BB%93%E6%9E%9C%EF%BC%88heatmap%EF%BC%89%E5%8F%AF%E8%A7%86%E5%8C%96"><span class="toc-number">3.</span> <span class="toc-text">预测结果（heatmap）可视化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8D%9F%E5%A4%B1%E7%9A%84%E8%AE%A1%E7%AE%97"><span class="toc-number">4.</span> <span class="toc-text">损失的计算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%84%E4%BB%B7%E5%87%86%E5%88%99"><span class="toc-number">5.</span> <span class="toc-text">评价准则</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA"><span class="toc-number">6.</span> <span class="toc-text">数据增强</span></a></li></ol></div></div><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='https://gitee.com/guudman/blog_images/raw/master/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">AI4Future</div><div class="author-info__description">Not Only Look Once</div></div><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/GuudMan" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:2663017379@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>Announcement</span></div><div class="announcement_content">微信公众号: 预留，暂未开通</div></div></div></div></main><footer id="footer" style="background: #FFFFFF"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2023 By AI4Future</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/chenxz21/hexo-theme-bcxm">Bcxm</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="Toggle Between Light And Dark Mode"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://fastly.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://fastly.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><script type="text/javascript" src="https://fastly.jsdelivr.net/npm/leancloud-storage@4.10.0/dist/av-min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://fastly.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><script id="click-heart" src="https://fastly.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script async>window.onload=function(){var a=document.createElement('script'),b=document.getElementsByTagName('script')[0];a.type='text/javascript',a.async=!0,a.src='/sw-register.js?v='+Date.now(),b.parentNode.insertBefore(a,b)};</script></body></html>
