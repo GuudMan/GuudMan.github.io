@@ -1,0 +1,237 @@
+<!DOCTYPE html><html lang="zh-cn" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>FCOS</title><meta name="keywords" content="深度学习"><meta name="author" content="AI4Future"><meta name="copyright" content="AI4Future"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="简介论文原文：论文原文) 在之前的一些目标检测网络中， 比如Faster RCNN, SSD, yolov2~v5都是基于Anchor进行预测，即在原图上生成一堆密密麻麻的Anchor Boxes， 然后网络基于这些Anchor去预测它们的类别、中心点偏移量以及宽高缩放因子得到网络预测输出的目标， 最后通过NMS(no-max-suppression非极大值抑制)即可得到最终预测目标。针对基于">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FCOS">
+<meta property="og:url" content="https://guudman.github.io/2023/11/24/FCOS/index.html">
+<meta property="og:site_name" content="Ai4Future">
+<meta property="og:description" content="简介论文原文：论文原文) 在之前的一些目标检测网络中， 比如Faster RCNN, SSD, yolov2~v5都是基于Anchor进行预测，即在原图上生成一堆密密麻麻的Anchor Boxes， 然后网络基于这些Anchor去预测它们的类别、中心点偏移量以及宽高缩放因子得到网络预测输出的目标， 最后通过NMS(no-max-suppression非极大值抑制)即可得到最终预测目标。针对基于">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg">
+<meta property="article:published_time" content="2023-11-24T09:46:37.000Z">
+<meta property="article:modified_time" content="2023-11-24T09:49:55.100Z">
+<meta property="article:author" content="AI4Future">
+<meta property="article:tag" content="深度学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://guudman.github.io/2023/11/24/FCOS/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":500},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"Author: AI4Future","link":"Link: ","source":"Source: Ai4Future","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source."}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://fastly.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://fastly.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'FCOS',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-11-24 17:49:55'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="Ai4Future" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="onerror=null;src='https://gitee.com/guudman/blog_images/raw/master/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">AI4Future</div><div class="author-info__description">Not Only Look Once</div></div><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/GuudMan" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:2663017379@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-clock"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/gedan"><i class="fa-fw fas fa-music"></i><span> 歌单</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk"><i class="fa-fw fa fa-heartbeat"></i><span> 时光</span></a></div><div class="menus_item"><a class="site-page" href="/shuoba"><i class="fa-fw fas fa-comment-dots"></i><span> 说吧</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-tools"></i><span> 工具</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/google"><span> 镜像</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://json.xbyzs.cf"><span> Json格式化</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://draw.xbyzs.cf"><span> Draw画布</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://enkey.xbyzs.cf"><span> EnKey</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Ai4Future</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-clock"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/gedan"><i class="fa-fw fas fa-music"></i><span> 歌单</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk"><i class="fa-fw fa fa-heartbeat"></i><span> 时光</span></a></div><div class="menus_item"><a class="site-page" href="/shuoba"><i class="fa-fw fas fa-comment-dots"></i><span> 说吧</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-tools"></i><span> 工具</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/google"><span> 镜像</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://json.xbyzs.cf"><span> Json格式化</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://draw.xbyzs.cf"><span> Draw画布</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://enkey.xbyzs.cf"><span> EnKey</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">FCOS</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2023-11-24T09:46:37.000Z" title="Created 2023-11-24 17:46:37">2023-11-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2023-11-24T09:49:55.100Z" title="Updated 2023-11-24 17:49:55">2023-11-24</time></span></div><div class="meta-secondline"></div></div></div><article class="post-content" id="article-container"><meta name="referrer" content="no-referrer">
+
+<h4 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h4><p>论文原文：<a href="[arxiv.org/pdf/1904.01355.pdf](https://arxiv.org/pdf/1904.01355.pdf">论文原文</a>)</p>
+<p>在之前的一些目标检测网络中， 比如Faster RCNN, SSD, yolov2~v5都是基于Anchor进行预测，即在原图上生成一堆密密麻麻的Anchor Boxes， 然后网络基于这些Anchor去预测它们的类别、中心点偏移量以及宽高缩放因子得到网络预测输出的目标， 最后通过NMS(no-max-suppression非极大值抑制)即可得到最终预测目标。针对基于Anchor网络存在的问题， 原作者总结如下四点：</p>
+<p>1、检测器的性能和Anchor的size以及aspect ratio相关， 比如在RetinaNet中改变Anchor(论文中说这是个超参数hyper-parameters)能够产生约4%的AP变化， 也就是说Anchor需要设置的合适才可以。</p>
+<p>2、一般Anchor的size和aspect ratio（ 宽度/高度 的比值）都是固定的， 所以很难处理哪些形状变化很大的目标（比如一本书横着放于竖着放久不一样）。而且迁移到其他任务中时，如果新的数据集目标和预训练数据集中的目标形状差别很多， 一般需要重新设计Anchor。</p>
+<p>3、为了达到更高的召回率（查全率），一般需要再图片中生成非常密集的Anchor Boxes尽可能保证每个目标都会有Anchor Boxes和它相交。比如在FPN（Feature Pyramid Network）中会生成超过18万个Anchor Boxes（以输入图片最小边长800为例）， 那么在训练时绝大部分的Anchor Boxes都会被分成负样本， 这样会导致正负样本及其不均。</p>
+<p>4、Anchor的引入使得网络在训练过程中更加的繁琐， 因为匹配正负样本时需要计算每个Anchor Boxes和每个GT BBoxes之间的IoU</p>
+<p>虽然基于Anchor的目标检测网络存在如上所述的问题， 但并不能否认它的有效性， 比如现在常用的YOLO V3~V5， 它们都是基于Anchor的网络， 当然今天的主角是Anchor-Free， 现在有关Anchor-Free的网络也很多， 比如DenseBox, YOLOV1, CornerNet, FCOS以及CenterNet等等， 而今天要讲的FCOS不仅是Anchor-Free还是One-Stage， FCN-base。</p>
+<p>FCOS是2019年发表在CVPR上的文章， 这篇文章的想法不仅简单而且有效， 它的思想是跳出Anchor的限制， 在预测特征图的每个位置上直接去预测该带你分别举例目标左侧， 上侧， 右侧以及下侧的距离。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231120194020661.png" alt="image-20231120194020661"></p>
+<h4 id="FCOS网络结构"><a href="#FCOS网络结构" class="headerlink" title="FCOS网络结构"></a>FCOS网络结构</h4><p>下图是2020年发表的版本， 与2019年发表的版本有些不同， 区别在于Center-ness分支的位置， 2019年发表的版本中是将Center-ness分支和classification分支放在一起的，但在2020年论文的图中将Center-ness分支和Regression分支放在一起的， 论文中说后者的效果更好一点。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231121183512578.png" alt="image-20231121183512578"></p>
+<p>下图是根据源码绘制的网络结构。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/fcos.jpg" alt="fcos"></p>
+<p>上图中Backbone以ResNet50为例， FPN是在Backbone输出的C3, C4和C5上先生成P3, P4和P5， 然后在P5的基础上通过一个卷积核大小为3x3步距为2的卷积层得到P6， 最后在P6的基础上再通过一个卷积核大小为3x3步距为2的卷积层得到P7。</p>
+<p>接着看Head部分（注意这里的Head是共享的， 即P3~P7都是共用一个Head), 有三个分支：Classification, Regression和Center-ness。其中Regression和Center-ness是同一个分支上的两个不同小分支。每个分支都会先通过4个Conv2d+GB+ReLU的组合模块， 然后再通过一个卷积核大小为3×3步距为1的卷积层得到最终的分类结果。 </p>
+<p>对于classification分支， 在预测特征图的每个位置上都会预测80个score参数（MS COCO数据集目标检测任务的类别数为80）。</p>
+<p>对于Regressio分支， 在预测特征图的每个位置上都会预测4个距离参数（距离目标左侧距离l， 上侧距离为t， 右侧距离为r以及下侧距离b， 这里预测的数值是相对特征图尺度上的）。假设对于预测特征图上某个点映射回原图的坐标是（c_x, c_v）, 特征图相对原图的步距为s， 那么网络预测该点对应的目标边界框坐标为：</p>
+<script type="math/tex; mode=display">x_{min} = c_x - l * s, y_{min} = c_y - t * s, x_{max} = c_x + r \cdot s, y_{max} = c_y + b \cdot s</script><p>对于Center-ness分支， 在预测特征图的每个位置上都会预测1个参数， center-ness反映的是该点（特征图上的某一点）距离目标中心的远近程度， 它的值域在0~1之间， 距离目标中心越近center-ness越接近1， 下面是center-ness真实标签的计算公式（计算损失时只考虑正样本， 即预测点在目标内的情况）</p>
+<script type="math/tex; mode=display">centerness^*=\sqrt{\frac{min(l^*, r^*)}{max(l^*, r^*)} \times \frac{min(t^*, b^*)}{max(t^*, b^*)}}</script><p>在网络后处理部分筛选高质量的bbox时， 会将预测的目标class score与center-ness相乘再开根号， 然后根据得到的结果对bbox进行排序， 只保留分数较高的bbox， 这样做的目的是筛掉哪些目标class score低且预测点距离目标中心较远的bbox， 最终保留下来的就是高质量的bbox。下表展示了使用和不使用<code>center-ness</code>对AP的影响，只看第一行和第三行，不使用<code>center-ness</code>时AP为33.5，使用<code>center-ness</code>后AP提升到37.1，说明<code>center-ness</code>对FCOS网络还是很有用的。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231121193354426.png" alt="image-20231121193354426"></p>
+<h4 id="正负样本的匹配"><a href="#正负样本的匹配" class="headerlink" title="正负样本的匹配"></a>正负样本的匹配</h4><p>在计算损失之前， 我们需要进行正负样本的匹配， 在基于Anchor的目标检测网络中， 一般会通过计算每个Anchor Box与每个GT的IoU配合事先设定的IoU阈值去匹配， 比如某个Anchor Box与某个GT的IoU大于0.7， 那么我们就将该Anchor Box设置为正样本， 但对于Anchor-Free的网络根本没有Anchor， 那该如何匹配正负样本呢， 在2020版本的论文中有这样的一段话：</p>
+<blockquote>
+<p>Specifically, location (x, y) is considered as a positive sample if it falls into the center area of any ground-truth box, by following [42]. The center area of a box centered at (cx , cy ) is defined as the sub-box (cx − rs, cy − rs, cx + rs, cy + rs) , where s is the total stride until the current feature maps and r is a hyper-parameter being 1.5 on COCO. The sub-box is clipped so that it is not beyond the original box. Note that this is different from our original conference version, where we consider the locations positive as long as they are in a ground-truth box.</p>
+</blockquote>
+<p>最开始的一句话就是说， 对于特征图上的某一点（x, y)， 只要它落入GT box中心区域， 那么它就被视为正样本（其实在2019年的论文中最开始说的是重要落入GT内就算正样本）。但在2020年发表论文中， 新加了一条规则，在满足上述条件外， 还需满足点(x, y)在（c_x - rs, c_y - rs, c_x + rs, c_y + rs）这个sub-box范围内， 其中（c_x, c_y）就是GT的中心点， s是特征图相对原图的步距， r是一个超参数控制距离GT中心的远近， 在COCO数据集中r设置为1.5， 换句话说点（x, y)不仅要在GT的范围内， 还要离GT的中心点（c_x, c_y）足够近才能被视为正样本。</p>
+<p>作图如下， 假设上面两个feature map对应的是同一个特征图， 将特征图上的每个店映射回原图就是下面图片中黑色的圆点， 根据2019年论文的匹配准则， 只要落入GT Box就算正样本， 所以左侧的feature map中打勾的位置都被视为正样本。根据2020年的论文， 不仅要落入GT Box还要在（c_x - rs, c_y - rs, c_x + rs, c_y + rs）这个sub-box范围内， 所以右侧的feature map中打勾的位置被视为正样本。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231121195818634.png" alt="image-20231121195818634"></p>
+<p>这里肯定会有人问， 如果feature map上的某个点同时落入两个GT Box内（即两个GT相交区域）， 那么该点到底分配给哪个GT Box， 这就是论文中提到的Ambiguity问题， 下图中， 橙色对应的点同时落入到人和球拍两个GT Box中， 此时默认将该点分配给面积Area最小的GT Box， 即图中的球拍， 其实引入FPN后能后减少这种情况。 </p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231121200356708.png" alt="image-20231121200356708"></p>
+<h4 id="损失计算"><a href="#损失计算" class="headerlink" title="损失计算"></a>损失计算</h4><p>FCOS网络结构中提高， Head总共有三个输出分支：Classification，Regression和Center-ness， 所以损失由分类损失L_cls， 定位损失L_reg以及center-ness损失L_ctrness三部分组成。</p>
+<script type="math/tex; mode=display">L(p_{x, y}, t_{x, y}, s_{x, y}, )=\frac{1}{N_{pos}} \sum_{x,y}(p_{x,y}, c^*_{x,y}) + \frac{1}{N_{pos}} \sum_{x,y}1_{c^*_{x,y}>0}L_{reg}(t_{x,y}, t*_{x,y}) +  \frac{1}{N_{pos}} \sum_{x,y}1_{c^*_{x,y}>0}L_{ctrness}(s_{x,y}, s*_{x,y})</script><p>上式子中：</p>
+<p>P_x,y表示特征图（x, y)点处预测的每个类别的score</p>
+<p>c*_x,y表示特征图（x, y)点对应的真实类别标签</p>
+<p>1{c*_x,y&gt;0}表示当特征图(x, y)点被匹配为正样本时为1， 否则为0</p>
+<p>t_x, y表示在特征图(x, y)点处预测的目标边界框信息</p>
+<p>t*_x, y表示在特征图(x, y)点处真实的目标边界框信息</p>
+<p>s_x, y表示在特征图(x, y)点处预测的center-ness</p>
+<p>s*_x, y表示在特征图(x, y)点处真实的center-ness</p>
+<p>对于分类损失L_cls采用bce_focal_loss， 即二值交叉熵损失配合focal_loss， 计算损失时所有样本都会参与计算（正样本和负样本）。定位损失L_reg采用giou_loss（在2019年版中采用iou_loss， 但在2020年版本中采用giou_loss）, 计算损失时只有正样本参数计算， center-ness损失采用二值交叉熵损失， 计算损失时只有正样本参数计算。 </p>
+<p>在匹配正负样本过程中， 对于特征图（x, y)点处对应的GT信息c*x,y和t*x, y比较好得到一点， 只要匹配到某一GT目标则c*x,y对应GT的类别， t*x,y对应GT的bbox。而获得真实的center-ness（s*x,y）要复杂一点， 下面是s*x, y的计算公式。</p>
+<script type="math/tex; mode=display">centerness^*=\sqrt{\frac{min(l^*, r^*)}{max(l^*, r^*)} \times \frac{min(t^*, b^*)}{max(t^*, b^*)}}</script><p>为方便理解， 作图如下， 假设对于特征图上的某一点（图中蓝色填充的cell）映射回原图， 对应图片中的黑色点， 然后计算该点距离GT box左侧， 上侧， 右侧， 下侧的距离就能得到l*, t*, t*, b*再套用上面的公式就能得到s*x,y 。（这里的l*, t*, t*, b*无论是计算特征图尺度上的还是原图尺度上的都无所谓， 因为centerness*对尺度不敏感）</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231122100035331.png" alt="image-20231122100035331"></p>
+<h4 id="Ambiguity问题"><a href="#Ambiguity问题" class="headerlink" title="Ambiguity问题"></a>Ambiguity问题</h4><p>论文中专门有一部分内容用来分析ambiguous sample问题， 即在匹配正样本的时当特征图上的某一点同时落入多个GT Box内时， 应该分配给哪一个GT的问题。</p>
+<blockquote>
+<p>Another concern about the FCN-based detector is that it may have a large number of ambiguous samples due to the overlap in ground-truth boxes.</p>
+</blockquote>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231121200356708.png" alt="image-20231121200356708"></p>
+<p>当特征图上的某一点同时落入多个GT Box内时， 默认将该点分配给面积Area最小的GT Box， 当然这并不是ig很好的解决方法。ambiguous samples的存在始终会对网络的学习以及预测产生干扰。作者再COCO2017年的val数据上进行了分析，作者发现如果不使用FPN结构时（仅在P4特征层上进行预测）会存在大量的ambiguous samples（大概占23.16%）， 如果启用FPN结构ambiguous samples会大幅度降低（大概占7.24%)。因为在FPN中会采用多个预测特征图， 不同尺度的特征图负责预测不同尺度的目标， 比如P3负责预测小型目标， P5负责预测中等目标， P7负责预测大型目标。作图如下， 比如对于小型目标 球拍， 根据尺度划分准则， 它被划分到feature map1上， 对于大型目标 人， 根据尺度划分准则【后面会讲】被划分到feature map2上， 这样在匹配正负样本时能将部分重叠在一起的目标（这里主要指不同尺度的目标）给分开， 解决了ambiguous samples的问题。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231122102449632.png" alt="image-20231122102449632"></p>
+<p>如果再采用center sampling匹配准则（在2020年更新的FCOS版本中， 匹配正样本时要求不仅要落入GT Box还要在（c_x - rs, c_y - rs, c_x + rs, c_y + rs）这个sub-box范围内）能够进一步降低ambiguous samples的比例（小于3%）。 </p>
+<h4 id="Assigning-objects-to-FPN"><a href="#Assigning-objects-to-FPN" class="headerlink" title="Assigning objects to FPN"></a>Assigning objects to FPN</h4><p>上文提到， 使用FPN结构能够降低ambiguous samples的比例， 那么按照怎样的准则将目标划分到对应尺度的特征图上呢， 在FPN中采用如下公式计算分配的</p>
+<script type="math/tex; mode=display">k = [k_0 + log_2(\sqrt{wh}/224)]</script><p>在FCOS中， 作者发现套用FPN中的公式效果并不是很好， 作者猜测是因为按照FPN中的分配准则， 不能确保目标在对应感受野范围内， 比如对于某个特征层， 每个cell的感受野为28x28， 但分配到该特征层上的目标为52×52.</p>
+<p>最终采用的是max（l*, t*, r*, b*）策略， 其中l*, t*, r*, b*分别代表某点（特征图映射在原图上）相对GT Box左边界， 上边界， 有边界以及下边界的距离。关于这个策略在2020年版本的论文中介绍的很清楚， 对于不同的预测特征图只要满足以下公式即可， 比如说P4特征图只要max(l*, t*, r*, b*)在（64， 128）之间即为正样本：</p>
+<script type="math/tex; mode=display">m_{i - 1} < max(l^*, t^*, r^*, b^*) < m_i</script></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">AI4Future</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://guudman.github.io/2023/11/24/FCOS/">https://guudman.github.io/2023/11/24/FCOS/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post_share"><div class="social-share" data-image="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://fastly.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2023/11/19/HRNet/"><img class="next-cover" src="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg" onerror="onerror=null;src='https://gitee.com/guudman/blog_images/raw/master/article.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">HRNet</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2023/11/02/AlexNet%E8%A7%A3%E6%9E%90/" title="AlexNet解析"><img class="cover" src="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-11-02</div><div class="title">AlexNet解析</div></div></a></div><div><a href="/2023/11/04/BatchNormalization/" title="BatchNormalization"><img class="cover" src="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-11-04</div><div class="title">BatchNormalization</div></div></a></div><div><a href="/2023/11/12/ConvNeXt/" title="ConvNeXt"><img class="cover" src="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-11-12</div><div class="title">ConvNeXt</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#FCOS%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84"><span class="toc-number">2.</span> <span class="toc-text">FCOS网络结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A3%E8%B4%9F%E6%A0%B7%E6%9C%AC%E7%9A%84%E5%8C%B9%E9%85%8D"><span class="toc-number">3.</span> <span class="toc-text">正负样本的匹配</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8D%9F%E5%A4%B1%E8%AE%A1%E7%AE%97"><span class="toc-number">4.</span> <span class="toc-text">损失计算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Ambiguity%E9%97%AE%E9%A2%98"><span class="toc-number">5.</span> <span class="toc-text">Ambiguity问题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Assigning-objects-to-FPN"><span class="toc-number">6.</span> <span class="toc-text">Assigning objects to FPN</span></a></li></ol></div></div><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='https://gitee.com/guudman/blog_images/raw/master/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">AI4Future</div><div class="author-info__description">Not Only Look Once</div></div><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/GuudMan" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:2663017379@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>Announcement</span></div><div class="announcement_content">微信公众号: 预留，暂未开通</div></div></div></div></main><footer id="footer" style="background: #FFFFFF"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2023 By AI4Future</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/chenxz21/hexo-theme-bcxm">Bcxm</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="Toggle Between Light And Dark Mode"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://fastly.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://fastly.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><script type="text/javascript" src="https://fastly.jsdelivr.net/npm/leancloud-storage@4.10.0/dist/av-min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://fastly.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><script id="click-heart" src="https://fastly.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script async>window.onload=function(){var a=document.createElement('script'),b=document.getElementsByTagName('script')[0];a.type='text/javascript',a.async=!0,a.src='/sw-register.js?v='+Date.now(),b.parentNode.insertBefore(a,b)};</script></body></html>
