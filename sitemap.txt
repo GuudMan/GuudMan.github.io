@@ -1,3 +1,4 @@
+https://guudman.github.io/2023/12/01/RNN/
 https://guudman.github.io/2023/11/29/NlpFoundation/
 https://guudman.github.io/2023/11/24/YOLOX/
 https://guudman.github.io/2023/11/17/YoloV5/

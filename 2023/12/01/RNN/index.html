@@ -1,0 +1,244 @@
+<!DOCTYPE html><html lang="zh-cn" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>RNN</title><meta name="keywords" content="NLP"><meta name="author" content="AI4Future"><meta name="copyright" content="AI4Future"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="1、简介RNN循环神经网络在nlp领域有些过时了， 训练数据足够多时， RNN的效果不如transformers模型， 但在小规模问题上， RNN还是很有用。机器学习中经常用到的文本、语音等时序数据， 思考一下， 如何对时序数据建模。在上面的基础部分讲到把一段文字整体输入到一个logistics regression模型， 让模型做二分类， 这属于one-to-one模型。 一个输入对应一个输">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RNN">
+<meta property="og:url" content="https://guudman.github.io/2023/12/01/RNN/index.html">
+<meta property="og:site_name" content="Ai4Future">
+<meta property="og:description" content="1、简介RNN循环神经网络在nlp领域有些过时了， 训练数据足够多时， RNN的效果不如transformers模型， 但在小规模问题上， RNN还是很有用。机器学习中经常用到的文本、语音等时序数据， 思考一下， 如何对时序数据建模。在上面的基础部分讲到把一段文字整体输入到一个logistics regression模型， 让模型做二分类， 这属于one-to-one模型。 一个输入对应一个输">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg">
+<meta property="article:published_time" content="2023-12-01T09:50:00.000Z">
+<meta property="article:modified_time" content="2023-12-01T10:04:34.438Z">
+<meta property="article:author" content="AI4Future">
+<meta property="article:tag" content="NLP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://guudman.github.io/2023/12/01/RNN/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":500},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"Author: AI4Future","link":"Link: ","source":"Source: Ai4Future","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source."}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://fastly.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://fastly.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'RNN',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-12-01 18:04:34'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="Ai4Future" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="onerror=null;src='https://gitee.com/guudman/blog_images/raw/master/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">AI4Future</div><div class="author-info__description">Not Only Look Once</div></div><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/GuudMan" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:2663017379@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-clock"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/gedan"><i class="fa-fw fas fa-music"></i><span> 歌单</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk"><i class="fa-fw fa fa-heartbeat"></i><span> 时光</span></a></div><div class="menus_item"><a class="site-page" href="/shuoba"><i class="fa-fw fas fa-comment-dots"></i><span> 说吧</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-tools"></i><span> 工具</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/google"><span> 镜像</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://json.xbyzs.cf"><span> Json格式化</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://draw.xbyzs.cf"><span> Draw画布</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://enkey.xbyzs.cf"><span> EnKey</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Ai4Future</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-clock"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/gedan"><i class="fa-fw fas fa-music"></i><span> 歌单</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk"><i class="fa-fw fa fa-heartbeat"></i><span> 时光</span></a></div><div class="menus_item"><a class="site-page" href="/shuoba"><i class="fa-fw fas fa-comment-dots"></i><span> 说吧</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-tools"></i><span> 工具</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/google"><span> 镜像</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://json.xbyzs.cf"><span> Json格式化</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://draw.xbyzs.cf"><span> Draw画布</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://enkey.xbyzs.cf"><span> EnKey</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">RNN</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2023-12-01T09:50:00.000Z" title="Created 2023-12-01 17:50:00">2023-12-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2023-12-01T10:04:34.438Z" title="Updated 2023-12-01 18:04:34">2023-12-01</time></span></div><div class="meta-secondline"></div></div></div><article class="post-content" id="article-container"><meta name="referrer" content="no-referrer">
+
+<h4 id="1、简介"><a href="#1、简介" class="headerlink" title="1、简介"></a>1、简介</h4><p>RNN循环神经网络在nlp领域有些过时了， 训练数据足够多时， RNN的效果不如transformers模型， 但在小规模问题上， RNN还是很有用。机器学习中经常用到的文本、语音等时序数据， 思考一下， 如何对时序数据建模。在上面的基础部分讲到把一段文字整体输入到一个logistics regression模型， 让模型做二分类， 这属于one-to-one模型。 一个输入对应一个输出， 全连接神经网络和卷积网络都是one-to-one模型，但人类并不会把一整段文字全部输入到大脑中。 人类阅读时会从左到右阅读一段文字， 阅读时逐渐在大脑中积累文本的信息， 阅读一段话后脑中积累了整段文字的大意。one-to-one模型要求一个输入对应一个输出， 比如输入一张图片， 输出每一类的概率值。one-to-one模型很适合图片的问题， 但不太适合文本的问题。</p>
+<p>对于文本问题， 输入和输出长度并不固定。 一句话可长可短， 所以输入的长度并不固定， 输出的长度也不固定。 比如把英文翻译成汉语， 英语可能有10个单词， 但翻译成的汉语可能有10个也可能有8个， 输出汉语的字数并不固定。由于输入和输出的长度不固定， one-to-one模型就不太适合了。</p>
+<p>对于时序数据， 更好的模型是many-to-one或者many-to-many模型， RNN就是这样的模型， 输入和输出都不需要固定， RNN很适合文本、语音等时序数据。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231129152146509.png" alt="image-20231129152146509" style="zoom:67%;"></p>
+<p>RNN跟人的阅读习惯很类似，人每次看一个词， 逐渐在大脑中积累信息。RNN每看一个词， 用状态向量h来积累阅读过的信息。我们把输入的一个词用word embedding变成一个向量x， 每次把一个词向量输入到RNN中， 然后RNN会更新状态h， 把新的内容更新到状态h中。h0包含了第一个词the的信息， h1包含了前两个词the cat的信息， 以此类推， 最后一个状态ht包含了整句话的信息。</p>
+<p>可把ht看成是从输入的这句话抽取得到的特征向量， 更新状态h时需要用到参数矩阵A。注意整个RNN只有一个参数A， 不管这条链路有多长， 参数A只有一个， A随机初始化， 然后利用训练数据来学习A。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231129152706261.png" alt="image-20231129152706261" style="zoom:67%;"></p>
+<hr>
+<h4 id="2、Simple-RNN"><a href="#2、Simple-RNN" class="headerlink" title="2、Simple RNN"></a>2、Simple RNN</h4><p>simple RNN的结构如下图所示。</p>
+<p>首先来看一下Simple RNN怎么把输入的词向量x结合到状态h里面? 上一个状态记住的是h_t-1, 新输入的词向量为xt， 把这两个向量做concatination， 得到一个更高维的向量。矩阵A是RNN的模型参数， 这里计算矩阵A和向量的乘积。 矩阵和向量的乘积是个向量， 然后把激活函数用到该向量的每个元素上。 激活函数是双曲正切函数tanh， 输入是任意实数， 输出在-1到1之间。把激活函数的输出作为新的状态向量ht。由于使用了tanh激活函数， 所以向量ht的每个元素都在-1到+1之间。</p>
+<p>RNN神经网络的结构图可以这样理解。新的状态ht是旧的状态ht-1和新的输入xt的函数， 神经网络的模型模型参数是矩阵A， 新的状态ht依赖于旧的状态向量ht-1, 向量xt以及矩阵A。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231129153119779.png" alt="image-20231129153119779" style="zoom:67%;"></p>
+<p>双曲正切函数的曲线图如下所示。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231129154031226.png" alt="image-20231129154031226" style="zoom:67%;"></p>
+<p>思考一下， 为什么需要双曲正切函数tanh， 能否将其去掉。 </p>
+<p>假设输入的词向量x全部都是0（这里考虑极端情况）， 这等同于把输入的词向量x给去掉， 把矩阵A右边那一半也去掉， 这样第100个状态向量h100就等于矩阵A乘以h99， 一直等于矩阵A的100次方乘以h0。加入矩阵A最大的特征值略小于1， 比如最大的特征值等于0.9。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231130100739550.png" alt="image-20231130100739550" style="zoom:67%;"></p>
+<p>那么会发生什么， 0.9的100次方非常接近0， 那么新的状态向量h100几乎也是全零的向量。</p>
+<script type="math/tex; mode=display">Suppose X_0 = ... = x_{100} = 0</script><script type="math/tex; mode=display">h_{100} = Ah_{99} = A^2h_{98} = ... = A^{100}h_0</script><p>假如矩阵A最大的特征值略大于1， 同理矩阵A的100次方会超级大， 那么新的状态向量h100的每个元素也都非常巨大。假如循环的次数更多，状态向量h就会爆炸或消失。由此可见， 如果每个这个激活函数， 数值计算可能会出现问题， 要么计算结果全为0， 要么计算结果都超级大。</p>
+<p>what will happen if λmax(A) = 0.9 or 1.2 ?</p>
+<p>所以需要使用tanh激活函数更新h， 而且更新之后会做一个normalization， 让h恢复到-1和+1这个合适的区间里。</p>
+<p>首先针对ht-1与xt拼接后的向量， 这个向量的维度是h的维度加上x的维度， 所以A必须有h的维度加上x的维度这么多列， A的行数等于向量ht的维度， 所以矩阵A的大小就是矩阵h的维度乘以（h+x的维度）, 这个乘积就是simple rnn的参数。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231130165042224.png" alt="image-20231130165042224" style="zoom:67%;"></p>
+<h4 id="3、模型搭建"><a href="#3、模型搭建" class="headerlink" title="3、模型搭建"></a>3、模型搭建</h4><p>之前是通过logistics regression来判断电影评论是正面的还是负面的， 下面通过RNN来完成这个分类任务。</p>
+<p>首先最底层是word embedding, 它可以把词映射到向量x， 词向量的维度可自由设置， 可以使用cross validation交叉验证来选择最优的维度， 这里设置x的维度是32，然后搭建simple rnn层， 输入的词向量x， 输出的状态h， h的维度也是也可自由设置， 应用用corss validation交叉验证来选择最优的维度，这里设置h的维度是32， 所以x和h的维度都是32， 但这里只是一个巧合而已， 通常h和x的维度不一样。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231130165417313.png" alt="image-20231130165417313" style="zoom:67%;"></p>
+<p>之前介绍过， 状态向量h积累输入的信息， 比如h0包含第一个单词i的信息， h1包含前两个词的信息， 最后一个ht积累了整句话的信息。</p>
+<p>可以让keras输出所有的状态向量， 也可以让keras只输出最后一个向量ht， ht积累了整句话的信息。所以使用ht这一个向量就够了。</p>
+<p>只使用ht， 而把ht前面的状态h全都丢掉， ht相当于从文本中提取的特征向量，把ht输入到分类器， 分类器就会输出一个0~1之间的数值， 0代表负面评价， 1代表正面评价。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231130171244821.png" alt="image-20231130171244821" style="zoom:67%;"></p>
+<p>然后设置这些超参数， 设置vocabulary是1万， 意思是词典中有1万个词汇， embedding_dim是32， 意思是词向量x的维度是32， word_num是500， 意思是每个电影评论有500个单词， 如果超过了500个， 超过部分就会被截掉。如果不到500个， 就用zero padding补成长度等于500。state_dim是32， 意思就是状态向量h的维度等于32。</p>
+<p>下面开始使用keras搭建网络。 首先添加embedding 层， 把它映射成向量， 然后是simpleRnn层。 SimpleRNN层需要指定状态向量h的维度， 其中return_sequences=False， 意思是RNN只输出最后一个状态向量， 而把之前的状态向量全部扔掉。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># !/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*-coding:utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> tensorflow.keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"><span class="keyword">from</span> tensorflow.keras.layers <span class="keyword">import</span> SimpleRNN, Embedding, Dense</span><br><span class="line"></span><br><span class="line"><span class="comment"># unique words in the dictionary</span></span><br><span class="line">vocabulary = <span class="number">10000</span></span><br><span class="line"><span class="comment"># shape(x) = 32</span></span><br><span class="line">embedding_dim = <span class="number">32</span></span><br><span class="line"><span class="comment"># sequence length 每条评论500个单词， 去长补短</span></span><br><span class="line">word_num = <span class="number">500</span></span><br><span class="line"><span class="comment"># shape(h) = 32</span></span><br><span class="line">state_dim = <span class="number">32</span></span><br><span class="line"></span><br><span class="line">model = Sequential()</span><br><span class="line">model.add(Embedding(vocabulary, embedding_dim, input_length=word_num))</span><br><span class="line"><span class="comment">#  return_sequences=False表示只输出最后的ht</span></span><br><span class="line">model.add(SimpleRNN(units=state_dim, return_sequences=<span class="literal">False</span>))</span><br><span class="line">model.add(Dense(<span class="number">1</span>, activation=<span class="string">&quot;sigmoid&quot;</span>))</span><br><span class="line">model.summary()</span><br></pre></td></tr></table></figure>
+<p>打印的模型概要如下：</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231130173214390.png" alt="image-20231130173214390" style="zoom:67%;"></p>
+<p>SimpleRNN层的参数量计算公式=h*(h + x) = 32×(32 + 32) + 32 = 2080， 最后面加的32表示偏置。</p>
+<p>搭建模型后开始编译模型， 然后用训练数据拟合模型， 编译模型时指定算法为RMSprop， 损失函数是crossentropy， 评价标准是acc， 然后用训练数据来拟合模型。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tensorflow.keras <span class="keyword">import</span> optimizers</span><br><span class="line"><span class="comment"># Early stoping alleviates overfitting</span></span><br><span class="line">epochs = <span class="number">3</span></span><br><span class="line">model.<span class="built_in">compile</span>(optimizer=optimizers.RMSprop(lr=<span class="number">0.001</span>),</span><br><span class="line">              loss=<span class="string">&#x27;binary_crossentropy&#x27;</span>, metrics=[<span class="string">&#x27;acc&#x27;</span>])</span><br><span class="line">history = model.fit(x_train, y_train, epochs=epochs,</span><br><span class="line">                    batch_size=<span class="number">32</span>, validation_data=(x_valid, y_valid))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用数据评价模型的表现</span></span><br><span class="line">scores = model.evaluate(x_test, y_test)</span><br></pre></td></tr></table></figure>
+<p>上面搭建模型时只使用了最后一个状态ht， 把ht之前的状态丢掉了。</p>
+<p>想要h0到ht所有的状态也可以， 如果让keras返回所有的状态， RNN的输出就是个矩阵。矩阵的每一行是一个状态向量。如果使用所有的状态， 需要加上一个flatten层， 把所有状态变成一个向量， 然后这些向量作为分类器的输入来判断电影是正面的还是负面的， 只需要把前面的网络结构稍作改动即可。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231201094445824.png" alt="image-20231201094445824" style="zoom:67%;"></p>
+<p>如果返回所有的状态， 对应的代码做如下的修改。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tensorflow.keras.layers <span class="keyword">import</span> SimpleRNN, Embedding, Dense, Flatten</span><br><span class="line"><span class="keyword">from</span> tensorflow.keras.models <span class="keyword">import</span> Sequential</span><br><span class="line"></span><br><span class="line"><span class="comment"># unique words in the dictionary</span></span><br><span class="line">vocabulary = <span class="number">10000</span></span><br><span class="line"><span class="comment"># shape(x) = 32</span></span><br><span class="line">embedding_dim = <span class="number">32</span></span><br><span class="line"><span class="comment"># sequence length 每条评论500个单词， 去长补短</span></span><br><span class="line">word_num = <span class="number">500</span></span><br><span class="line"><span class="comment"># shape(h) = 32</span></span><br><span class="line">state_dim = <span class="number">32</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 下面是return_sequences=True的情况</span></span><br><span class="line">model = Sequential()</span><br><span class="line">model.add(Embedding(vocabulary, embedding_dim, input_length=word_num))</span><br><span class="line"><span class="comment">#  return_state=False表示只输出最后的ht</span></span><br><span class="line">model.add(SimpleRNN(units=state_dim, return_sequences=<span class="literal">True</span>))</span><br><span class="line">model.add(Flatten())</span><br><span class="line">model.add(Dense(<span class="number">1</span>, activation=<span class="string">&quot;sigmoid&quot;</span>))</span><br><span class="line">model.summary()</span><br></pre></td></tr></table></figure>
+<p>打印的模型参数如下所示：</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231201101052199.png" alt="image-20231201101052199" style="zoom:67%;"></p>
+<p>上面是改动模型后打印的概要， 当return_sequence=False时只输出最后一个状态ht， 所以RNN层的输出是32维的向量。当return_sequences=True时， RNN输出所有的状态向量， 所以RNN的输出是500×32的矩阵。500的意思是每条电影评论中有500个单词， 所以一共有500个状态向量， 每个状态向量都是32维。</p>
+<h4 id="4、RNN模型的缺陷"><a href="#4、RNN模型的缺陷" class="headerlink" title="4、RNN模型的缺陷"></a>4、RNN模型的缺陷</h4><p>举个例子， 现在有这样一个问题， 给定半句话要求预测下一个单词。比如clouds are in the _正确的输出是sky。现在如果在大量文本上训练RNN， 应该是有能力做出这种预测的。在这个例子中， RNN只需要看最近的几个单词。RNN并不需要更多的上下文， 并不需要看得更远， 这个例子对simple RNN有利， simple RNN很适合做这种short term dependence。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231201102334418.png" alt="image-20231201102334418" style="zoom:67%;"></p>
+<p>Simple RNN的缺点是不擅长long-term dependence。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231201102839929.png" alt="image-20231201102839929" style="zoom:67%;"></p>
+<p>RNN中的状态h跟之前的所有输入的x都有函数依赖关系。 理论上，  若改变输入的单词x1， 那么之后所有的状态h都是发生变化，但实际上simpleRnn并没有这种性质，所以很不合理。如果把第100个向量h100关于输入x1求导， 会发现导数几乎等于0。导数等于0说明改变输入x1， h100几乎不会发生任何变化。也就是说状态h100跟100步之前的x1几乎没有关系了， 说明状态h100将很多步之前的输入给忘记了， 这显然不合理。</p>
+<p>Simple RNN的遗忘会造成一些问题。举个例子， 这是一段话， 开始是I grew up in China, when I was a child,…， 说了很多之后，来了一句, I speak fluent _。然后Simple RNN并不会做出Chinese这个正确的预测， 因为RNN已经把前文忘记了， simple RNN很擅长short term dependence。RNN看到最近的单词是speak fluent， 所以RNN知道下一个单词应该是某种语言， 预测输出可能是任意一种语言。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231201104615371.png" alt="image-20231201104615371" style="zoom:67%;"></p>
+<h4 id="5、总结"><a href="#5、总结" class="headerlink" title="5、总结"></a>5、总结</h4><p>RNN是一种神经网络， 但是它的结构不同于全连接网络和卷积网络， RNN适合文本、语音、时序序列等数据。RNN按照顺序读取每一个词向量， 并且在状态向量h中积累看过的信息。ht只积累了之前所有x的信息。有一种错误的看法是ht只包含了xt的信息，这是不对的。可以认为ht就是从整个输入序列中抽取的特征向量，所以只需要ht向量就可以判断电影评论是正面的还是负面的。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231201111508008.png" alt="image-20231201111508008" style="zoom:67%;"></p>
+<p>RNN也有一个缺点， RNN的记忆比较短， 它会遗忘很久之前的输入x， 如果这个时间序列很长， 比如好几十步， 最终的ht已经忘记了早先的输入。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231201111840310.png" alt="image-20231201111840310" style="zoom:67%;"></p>
+<p>simple RNN有一个参数矩阵A， 它还有可能有一个intercept向量， 这里忽略了这个参数b， 这个参数矩阵的维度是h的维度乘以h加上输入x的维度。</p>
+<p>参数矩阵A一开始是随机初始化的， 然后从训练数据中学习这个参数矩阵。注意simple RNN只有这一个参数矩阵， 不管这个序列有多长， 参数矩阵只有一个， 所有模块里面的参数都是一样的。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231201112048270.png" alt="image-20231201112048270" style="zoom:67%;"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">AI4Future</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://guudman.github.io/2023/12/01/RNN/">https://guudman.github.io/2023/12/01/RNN/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post_share"><div class="social-share" data-image="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://fastly.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2023/11/29/NlpFoundation/"><img class="next-cover" src="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg" onerror="onerror=null;src='https://gitee.com/guudman/blog_images/raw/master/article.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">NlpFoundation</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2023/11/29/NlpFoundation/" title="NlpFoundation"><img class="cover" src="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-11-29</div><div class="title">NlpFoundation</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81%E7%AE%80%E4%BB%8B"><span class="toc-number">1.</span> <span class="toc-text">1、简介</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81Simple-RNN"><span class="toc-number">2.</span> <span class="toc-text">2、Simple RNN</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%81%E6%A8%A1%E5%9E%8B%E6%90%AD%E5%BB%BA"><span class="toc-number">3.</span> <span class="toc-text">3、模型搭建</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4%E3%80%81RNN%E6%A8%A1%E5%9E%8B%E7%9A%84%E7%BC%BA%E9%99%B7"><span class="toc-number">4.</span> <span class="toc-text">4、RNN模型的缺陷</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5%E3%80%81%E6%80%BB%E7%BB%93"><span class="toc-number">5.</span> <span class="toc-text">5、总结</span></a></li></ol></div></div><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='https://gitee.com/guudman/blog_images/raw/master/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">AI4Future</div><div class="author-info__description">Not Only Look Once</div></div><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/GuudMan" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:2663017379@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>Announcement</span></div><div class="announcement_content">微信公众号: AI4Future</div></div></div></div></main><footer id="footer" style="background: #FFFFFF"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2023 By AI4Future</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/chenxz21/hexo-theme-bcxm">Bcxm</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="Toggle Between Light And Dark Mode"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://fastly.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://fastly.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><script type="text/javascript" src="https://fastly.jsdelivr.net/npm/leancloud-storage@4.10.0/dist/av-min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://fastly.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><script id="click-heart" src="https://fastly.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script async>window.onload=function(){var a=document.createElement('script'),b=document.getElementsByTagName('script')[0];a.type='text/javascript',a.async=!0,a.src='/sw-register.js?v='+Date.now(),b.parentNode.insertBefore(a,b)};</script></body></html>
