@@ -34,10 +34,10 @@ https://guudman.github.io/2023/09/09/%E5%85%B3%E4%BA%8E%E6%88%91/
 https://guudman.github.io/2023/09/08/%E4%B8%96%E7%95%8C%EF%BC%8C%E4%BD%A0%E5%A5%BD/
 https://guudman.github.io/gedan/index.html
 https://guudman.github.io/
+https://guudman.github.io/tags/ComputureVision/
+https://guudman.github.io/tags/NLP/
 https://guudman.github.io/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/
 https://guudman.github.io/tags/neo4j/
 https://guudman.github.io/tags/pytorch/
-https://guudman.github.io/tags/%E5%8D%B7%E7%A7%AF/
-https://guudman.github.io/tags/ComputureVision/
-https://guudman.github.io/tags/NLP/
 https://guudman.github.io/tags/Graph/
+https://guudman.github.io/tags/%E5%8D%B7%E7%A7%AF/
