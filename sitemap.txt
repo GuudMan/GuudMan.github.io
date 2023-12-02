@@ -1,5 +1,5 @@
-https://guudman.github.io/2023/12/02/make-RNN-more-efficient/
 https://guudman.github.io/2023/12/02/LSTM/
+https://guudman.github.io/2023/12/02/make-RNN-more-efficient/
 https://guudman.github.io/2023/12/01/RNN/
 https://guudman.github.io/2023/11/29/NlpFoundation/
 https://guudman.github.io/2023/11/24/YOLOX/
