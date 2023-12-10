@@ -1,0 +1,261 @@
+<!DOCTYPE html><html lang="zh-cn" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>MultiHead_Self-Attention</title><meta name="keywords" content="NLP"><meta name="author" content="AI4Future"><meta name="copyright" content="AI4Future"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="1、简介之前构造了attention layer和Self-Attention layer， 本文通过基本组件搭建深度神经网络。 首先通过attention构建multi-head attention。之前定义的Self-Attention层， 输入是一个序列， x1到xm， Self-Attention有三个参数矩阵， Wq， Wk， Wv， 输出是一个序列， 这样的Self-Attenti">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MultiHead_Self-Attention">
+<meta property="og:url" content="https://guudman.github.io/2023/12/10/MultiHead-Self-Attention/index.html">
+<meta property="og:site_name" content="Ai4Future">
+<meta property="og:description" content="1、简介之前构造了attention layer和Self-Attention layer， 本文通过基本组件搭建深度神经网络。 首先通过attention构建multi-head attention。之前定义的Self-Attention层， 输入是一个序列， x1到xm， Self-Attention有三个参数矩阵， Wq， Wk， Wv， 输出是一个序列， 这样的Self-Attenti">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg">
+<meta property="article:published_time" content="2023-12-10T10:50:02.000Z">
+<meta property="article:modified_time" content="2023-12-10T10:52:06.451Z">
+<meta property="article:author" content="AI4Future">
+<meta property="article:tag" content="NLP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://guudman.github.io/2023/12/10/MultiHead-Self-Attention/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":500},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"Author: AI4Future","link":"Link: ","source":"Source: Ai4Future","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source."}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://fastly.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://fastly.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'MultiHead_Self-Attention',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-12-10 18:52:06'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="Ai4Future" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="onerror=null;src='https://gitee.com/guudman/blog_images/raw/master/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">AI4Future</div><div class="author-info__description">Not Only Look Once</div></div><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/GuudMan" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:2663017379@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-clock"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/gedan"><i class="fa-fw fas fa-music"></i><span> 歌单</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk"><i class="fa-fw fa fa-heartbeat"></i><span> 时光</span></a></div><div class="menus_item"><a class="site-page" href="/shuoba"><i class="fa-fw fas fa-comment-dots"></i><span> 说吧</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-tools"></i><span> 工具</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/google"><span> 镜像</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://json.xbyzs.cf"><span> Json格式化</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://draw.xbyzs.cf"><span> Draw画布</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://enkey.xbyzs.cf"><span> EnKey</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Ai4Future</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-clock"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/gedan"><i class="fa-fw fas fa-music"></i><span> 歌单</span></a></div><div class="menus_item"><a class="site-page" href="/artitalk"><i class="fa-fw fa fa-heartbeat"></i><span> 时光</span></a></div><div class="menus_item"><a class="site-page" href="/shuoba"><i class="fa-fw fas fa-comment-dots"></i><span> 说吧</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-tools"></i><span> 工具</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/google"><span> 镜像</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://json.xbyzs.cf"><span> Json格式化</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://draw.xbyzs.cf"><span> Draw画布</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="https://enkey.xbyzs.cf"><span> EnKey</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">MultiHead_Self-Attention</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2023-12-10T10:50:02.000Z" title="Created 2023-12-10 18:50:02">2023-12-10</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2023-12-10T10:52:06.451Z" title="Updated 2023-12-10 18:52:06">2023-12-10</time></span></div><div class="meta-secondline"></div></div></div><article class="post-content" id="article-container"><meta name="referrer" content="no-referrer">
+
+<h4 id="1、简介"><a href="#1、简介" class="headerlink" title="1、简介"></a>1、简介</h4><p>之前构造了attention layer和Self-Attention layer， 本文通过基本组件搭建深度神经网络。</p>
+<p>首先通过attention构建multi-head attention。之前定义的Self-Attention层， 输入是一个序列， x1到xm， Self-Attention有三个参数矩阵， Wq， Wk， Wv， 输出是一个序列， 这样的Self-Attention被称为single head。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207092738528.png" alt="image-20231207092738528"></p>
+<p>Multi-Head Self-Attention是由多个单头Self-Attention组成。它们各自有各自的参数， 不共享参数。每个单头Self-Attention有三个参数矩阵， 所以Multi-Head Self-Attention有3l个参数矩阵， 这样就得到了多头注意力。所有单头Self-Attention都有相同的输入， 输入都是x序列， 但它们的参数矩阵各不相同， 所以输出的c序列也各不相同。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207093155341.png" alt="image-20231207093155341"></p>
+<p>把l个单头Self-Attention输出的序列做concatination堆叠起来， 作为多头Self-Attention的输出，堆叠起来的c向量变得更高。如果每个单头的输出都是d×m的矩阵， 那么多头的输出就是(ld)×m的矩阵。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207093420804.png" alt="image-20231207093420804"></p>
+<p>上面用l个单头Self-Attention构造出多头Self-Attention， 也可以用l个单头attention构造多头attention。所有单头attention的输入都是两个序列， x1到xm， 以及x’1到x‘m。每个单头attention都有各自的参数矩阵， 它们不共享参数， 每个单头都有自己的输出序列c1到ct， 把单头输出的c堆叠起来就是多头的输出。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207093741980.png" alt="image-20231207093741980"></p>
+<h4 id="2、网络搭建"><a href="#2、网络搭建" class="headerlink" title="2、网络搭建"></a>2、网络搭建</h4><h5 id="2-1-stacked-Self-Attention-layer"><a href="#2-1-stacked-Self-Attention-layer" class="headerlink" title="2.1 stacked Self-Attention layer"></a>2.1 stacked Self-Attention layer</h5><p>已经构造出多头Self-Attention与多头attention， 接下来用这两种层搭建一个深度神经网络。首先用多头Self-Attention与全连接层搭建一个encoder网络。</p>
+<p>下面是刚才定义的多头Self-Attention层， 输入是序列x1到xm， 输出是序列c1到cm。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207094140540.png" alt="image-20231207094140540"></p>
+<p>然后再搭建一个全连接层， 把向量c1作为输入， 全连接层把c1乘到参数矩阵Wu上， 然后再用Relu或其他激活函数得到输出向量u1。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207094351283.png" alt="image-20231207094351283"></p>
+<p>把同一个全连接层用到c2上， 同样的操作得到输出u2。注意两个全连接才能够是完全相同的， 它们的参数矩阵都是Wu。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207094529036.png" alt="image-20231207094529036"></p>
+<p>依次类推一直输出Um， 得到m个输出向量u， 这些全连接层都是一样的， 有同一个参数矩Wu。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207094643915.png" alt="image-20231207094643915"></p>
+<p>上面搭建了两层， 一个多头Self-Attention， 一个全连接层。输入是m个向量x1到xm。输出也是m个向量u1到um。ui向量在xi向量之上， 但它不仅仅依赖于xi， ui依赖于所有的m个向量。改变任何一个x向量， ui都会发生变化， 当然对ui影响最大的还是xi。</p>
+<p>可以继续搭建更多层。再搭一个多头Self-Attention层和一个全连接层。想搭多少层都可以， 这样就可以搭建出一个深度神经网络， 道理跟多层RNN是一样的。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207095307748.png" alt="image-20231207095307748"></p>
+<h4 id="3、transformer-encoder网络"><a href="#3、transformer-encoder网络" class="headerlink" title="3、transformer encoder网络"></a>3、transformer encoder网络</h4><p>现在来搭建transformer模型的encoder网络。 一个block有两层， 一个多头Self-Attention层， 一个全连接层。输入是512×m的矩阵， 输出也是512×m的矩阵。这里的m是输入序列x的长度， 每个x向量都是512维的。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207095830644.png" alt="image-20231207095830644"></p>
+<p>这是encoder网络的结构， 输入是512×m的矩阵x， x的每一列都是512维的词向量。下面是刚刚定义的block， 它有两层， 一个Self-Attention层， 一个全连接层。输出也是512×m的矩阵。输入和输出的大小一样， 所以可以用resnet中的捷径分支进行连接， 把输入加到输出上。</p>
+<p>然后搭第二个block， 输出还是512乘以m的矩阵， 想搭多少个block都可以。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207095942388.png" alt="image-20231207095942388"></p>
+<p>transformer的encoder网络一共搭了6个blocks， 每个block有两层， 每个block都有自己的参数。block之间不共享参数， 最终输出是512乘以m的矩阵。输出与输入的大小是一样的。</p>
+<p>通过堆叠多个Self-Attention与全连接层搭建出encoder网络， encoder网络有6个block， 每个block有两层。现在进一步用attention层， transformer的decoder网络。</p>
+<h4 id="4、transformer-decoder网络"><a href="#4、transformer-decoder网络" class="headerlink" title="4、transformer decoder网络"></a>4、transformer decoder网络</h4><p>transformer是一个seq2seq模型， 它有一个encoder和一个decoder。输入是两个序列， 如果要把英语翻译成德语， 那么x的序列就是英语的词向量， x’是德语的词向量。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207100532043.png" alt="image-20231207100532043"></p>
+<p>上面搭建的encoder网络， 它有6个block， 每个block有两层， 包含一个Multi-Head Self-Attention层与一个全连接层。encoder的输入和输出都是512维的向量， 输入序列有m个词向量， x1到xm。输出序列也有m个词向量， u1到um。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207101039748.png" alt="image-20231207101039748"></p>
+<p>现在开始搭建decoder网络的一个block。block的第一层是一个多头Self-Attention层， 输入是序列x1‘到xt’， 输出是序列c1到ct， 它们全都是512维的向量。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207101342981.png" alt="image-20231207101342981"></p>
+<p>第二层是多头的attention层， 第一层的输入是两个序列。一个序列是u1到um。 他们是encoder网络的输出。另外一个序列是刚刚得到的c1到ct， 多头attention的输出是z1到zt， 它们也都是512维的向量。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207101554220.png" alt="image-20231207101554220"></p>
+<p>最后再搭建一个全连接层， 输入是512维的向量z1， 输出是512维的向量s1。全连接层都一样， 都是把参数矩阵Ws与输入的z向量相乘， 然后用relu激活函数， 得到向量s1。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207101747445.png" alt="image-20231207101747445"></p>
+<p>同理再把z2作为输入， 得到全连接层的输出s2。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207101848021.png" alt="image-20231207101848021"></p>
+<p>依次类推， 把所有的z向量映射到s向量。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207101942372.png" alt="image-20231207101942372"></p>
+<p>上面是搭建的decoder网络的一个block。 可以发现decoder的一个block包含三层， 分别是Self-Attention层， attention层以及全连接层。</p>
+<p>再重复一遍， decode的一个block中包含三层， 分别是Self-Attention层， attention层以及全连接层。这三层组成decoder的一个block。这个block需要两个输入序列， 两个序列都是512维的向量， 两个序列的长度分别是m个t。如果把英语翻译成德语， 那么m是英语句子的长度， t是德语句子的长度。这个block输出序列的长度是t，每个向量都是512维的。</p>
+<p> <img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207102410836.png" alt="image-20231207102410836"></p>
+<h4 id="5、搭建transformer"><a href="#5、搭建transformer" class="headerlink" title="5、搭建transformer"></a>5、搭建transformer</h4><p>将上面的所有模块拼接起来得到最终的transformer模型。</p>
+<p>首先是encoder网络。 encoder网络很简单， 依次叠加6个block， 每个block有两层（Self-Attention层+dense层）。 encoder网络的输入是矩阵x， 它有m列， 每列是512维的词向量。输出是矩阵u， 它跟输入矩阵x的大小完全一样。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207104301908.png" alt="image-20231207104301908"></p>
+<p>之前已经搭建了decoder网络的一个block， 它的输入是两个序列， 输出是一个序列。block1是decoder网络的最底层模块， 左边输入序列是512×m的矩阵U， 也是encoder网络的输出。右边输入序列是512xt的矩阵x’。这个模块输出512×t的矩阵， 大小跟右边的输入x‘一样。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207104536860.png" alt="image-20231207104536860"></p>
+<p>再堆叠decode中的一个block。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207104600988.png" alt="image-20231207104600988"></p>
+<p>依次类推， 一共堆叠了6个block。 组成了decoder网络。每个网络有三层， 分别是Self-Attention层， attention层以及全连接层。每个block有两个输入序列和一个输出序列。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207104737291.png" alt="image-20231207104737291"></p>
+<p>左边的encoder网络和右边的decoder网络组合起来就是transformer模型。最终输出的序列是t个向量， 每个向量都是512维的。</p>
+<p>现在回顾一下RNN seq2seq模型。它有两个输入序列， encoder输入是x1到xm。 decoder输出是x1’到xt’。transformer模型也有两个输入序列， 输出也是t个向量。可以看出RNN seq2seq与transformer模型， 二者输入大小完全一样， 输出大小也完全一样。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207105304644.png" alt="image-20231207105304644"></p>
+<p>所有RNN seq2seq模型能做的， transformer模型也能做。</p>
+<p>以英语德语翻译为例。</p>
+<p>输入是一系列单词，经过embedding层映射之后得到x1到xm向量， m个向量经过6个block堆叠而成的Encoder网络之后输出m个向量， u1、u2到um。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207105539101.png" alt="image-20231207105539101"></p>
+<p>将encoder的输出向量u作为decoder网络的输入。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207105736380.png" alt="image-20231207105736380"></p>
+<p>encoder的输出u加上新的输入x‘1经过6个block堆叠而成的decoder之后得到输出y1。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207105917333.png" alt="image-20231207105917333"></p>
+<p>通过随机采样得到第一个德语单词， 并将其作为decoder网络的输入序列x2’</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207110033276.png" alt="image-20231207110033276"></p>
+<p>依次类推完成整个句子的翻译。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207110102318.png" alt="image-20231207110102318"></p>
+<h4 id="6、single-head-到Multi-Head"><a href="#6、single-head-到Multi-Head" class="headerlink" title="6、single head 到Multi-Head"></a>6、single head 到Multi-Head</h4><p>利用上述单头Self-Attention搭建多头Self-Attention。方法很简单， 就是用多个单头Self-Attention， 它们各自有各自的参数， 都把矩阵x作为输入， 分别输出各自的c矩阵。每个c矩阵的大小都是d×m， m是输入序列的长度。</p>
+<p>把所有得到的c矩阵做concatination得到更高的矩阵， 这个矩阵就是多头Self-Attention的输出。同样的方法也可以得到多头的attention的输出。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207110732945.png" alt="image-20231207110732945"></p>
+<p>encoder就是用多头Self-Attention和全连接层搭建的， 每个block有两层， 分别是多头Self-Attention层和全连接层。</p>
+<p>decoder有三层， 分别是多头Self-Attention层， 多头attention层以及全连接层。</p>
+<p><img src="https://gitee.com/guudman/blog_images/raw/master/image-20231207111218667.png" alt="image-20231207111218667"></p>
+<p>transformer是seq2seq模型， 它有encoder网络和decoder网络， 可以用来做机器翻译。</p>
+<p>transformer没有RNN， 不是循环结构。transformer完全基于attention和全连接层。transformer与RNN的输入输出大小完全都一样，transformer在nlp上的效果非常好， 所以transformer已经是业界的标准。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">AI4Future</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://guudman.github.io/2023/12/10/MultiHead-Self-Attention/">https://guudman.github.io/2023/12/10/MultiHead-Self-Attention/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post_share"><div class="social-share" data-image="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://fastly.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2023/12/10/Self-Attention-1/"><img class="next-cover" src="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg" onerror="onerror=null;src='https://gitee.com/guudman/blog_images/raw/master/article.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">Self-Attention</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2023/12/07/Attention/" title="Attention"><img class="cover" src="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-12-07</div><div class="title">Attention</div></div></a></div><div><a href="/2023/12/02/LSTM/" title="LSTM"><img class="cover" src="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-12-02</div><div class="title">LSTM</div></div></a></div><div><a href="/2023/11/29/NlpFoundation/" title="NlpFoundation"><img class="cover" src="https://gitee.com/guudman/blog_images/raw/master/top_image.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-11-29</div><div class="title">NlpFoundation</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E3%80%81%E7%AE%80%E4%BB%8B"><span class="toc-number">1.</span> <span class="toc-text">1、简介</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E3%80%81%E7%BD%91%E7%BB%9C%E6%90%AD%E5%BB%BA"><span class="toc-number">2.</span> <span class="toc-text">2、网络搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#2-1-stacked-Self-Attention-layer"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 stacked Self-Attention layer</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E3%80%81transformer-encoder%E7%BD%91%E7%BB%9C"><span class="toc-number">3.</span> <span class="toc-text">3、transformer encoder网络</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4%E3%80%81transformer-decoder%E7%BD%91%E7%BB%9C"><span class="toc-number">4.</span> <span class="toc-text">4、transformer decoder网络</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5%E3%80%81%E6%90%AD%E5%BB%BAtransformer"><span class="toc-number">5.</span> <span class="toc-text">5、搭建transformer</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6%E3%80%81single-head-%E5%88%B0Multi-Head"><span class="toc-number">6.</span> <span class="toc-text">6、single head 到Multi-Head</span></a></li></ol></div></div><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='https://gitee.com/guudman/blog_images/raw/master/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">AI4Future</div><div class="author-info__description">Not Only Look Once</div></div><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/GuudMan" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:2663017379@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>Announcement</span></div><div class="announcement_content">微信公众号: AI4Future</div></div></div></div></main><footer id="footer" style="background: #FFFFFF"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2023 By AI4Future</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/chenxz21/hexo-theme-bcxm">Bcxm</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="Toggle Between Light And Dark Mode"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://fastly.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://fastly.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><script type="text/javascript" src="https://fastly.jsdelivr.net/npm/leancloud-storage@4.10.0/dist/av-min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://fastly.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><script id="click-heart" src="https://fastly.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script async>window.onload=function(){var a=document.createElement('script'),b=document.getElementsByTagName('script')[0];a.type='text/javascript',a.async=!0,a.src='/sw-register.js?v='+Date.now(),b.parentNode.insertBefore(a,b)};</script></body></html>

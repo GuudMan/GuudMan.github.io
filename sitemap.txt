@@ -1,3 +1,5 @@
+https://guudman.github.io/2023/12/10/MultiHead-Self-Attention/
+https://guudman.github.io/2023/12/10/Self-Attention-1/
 https://guudman.github.io/2023/12/09/Transformer/
 https://guudman.github.io/2023/12/08/Self-Attention/
 https://guudman.github.io/2023/12/07/Attention/
