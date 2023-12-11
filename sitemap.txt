@@ -1,5 +1,5 @@
-https://guudman.github.io/2023/12/11/Bert/
 https://guudman.github.io/2023/12/10/MultiHead_SelfAttention/
+https://guudman.github.io/2023/12/11/Bert/
 https://guudman.github.io/2023/12/09/Transformer/
 https://guudman.github.io/2023/12/08/Self-Attention/
 https://guudman.github.io/2023/12/07/Attention/
@@ -44,7 +44,7 @@ https://guudman.github.io/
 https://guudman.github.io/tags/ComputureVision/
 https://guudman.github.io/tags/NLP/
 https://guudman.github.io/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/
-https://guudman.github.io/tags/pytorch/
 https://guudman.github.io/tags/neo4j/
+https://guudman.github.io/tags/pytorch/
 https://guudman.github.io/tags/Graph/
 https://guudman.github.io/tags/%E5%8D%B7%E7%A7%AF/

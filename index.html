@@ -51,7 +51,7 @@
   isHome: true,
   isHighlightShrink: false,
   isToc: false,
-  postUpdate: '2023-12-11 18:58:53'
+  postUpdate: '2023-12-11 19:17:16'
 }</script><noscript><style type="text/css">
   #nav {
     opacity: 1
@@ -138,7 +138,7 @@
 BERT在18年提出， 19年发表， bert的目的是预训练transformer的encoder网络，从而大幅度提高准确率。bert的基本想法有两个， 一个是随机遮挡一个或多个单词， 让encoder网络根据上下文来预测被遮挡的单词。第二个想法是把两个句子放在一起， 让encoder网络判断两句话是不是原文中相邻的两句话。bert用这两个任务来预训练transformer模型中的encoder网络。
 2、Predict Masked Word首先回顾一下transformer中的encoder网络， 输入是一句话， 被分成很多个单词。embedding层把每一个单词映射到一个词向量。encoder网络是由多个block堆叠起来的， 每个block有两层， Self-Attention层和全连接层。
 
-the cat sat on the mat. 输入有6个单词， embedding层把这两个单词映射 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2023/12/10/MultiHead_SelfAttention/" title="MultiHead_Self-Attention">MultiHead_Self-Attention</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time class="post-meta-date-created" datetime="2023-12-10T10:50:02.000Z" title="Created 2023-12-10 18:50:02">2023-12-10</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2023-12-10T10:52:06.451Z" title="Updated 2023-12-10 18:52:06">2023-12-10</time></span></div><div class="content">
+the cat sat on the mat. 输入有6个单词， embedding层把这两个单词映射 ...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2023/12/10/MultiHead_SelfAttention/" title="MultiHead_SelfAttention">MultiHead_SelfAttention</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time class="post-meta-date-created" datetime="2023-12-10T10:50:02.000Z" title="Created 2023-12-10 18:50:02">2023-12-10</time><span class="article-meta-separator">|</span><i class="fas fa-history"></i><span class="article-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2023-12-11T11:16:53.959Z" title="Updated 2023-12-11 19:16:53">2023-12-11</time></span></div><div class="content">
 
 1、简介之前构造了attention layer和Self-Attention layer， 本文通过基本组件搭建深度神经网络。
 首先通过attention构建multi-head attention。之前定义的Self-Attention层， 输入是一个序列， x1到xm， Self-Attention有三个参数矩阵， Wq， Wk， Wv， 输出是一个序列， 这样的Self-Attention被称为single head。
